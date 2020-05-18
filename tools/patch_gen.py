@@ -7,10 +7,8 @@ import argparse
 
 def patch_gen(x):
     # Reading all the images and labels from input folders
-    image_paths = sorted(glob.glob(str(x.image_folder) + "*." + x.image_type))
-    label_paths = sorted(glob.glob(str(x.label_folder) + "*." + x.label_type))
-    print(len(image_paths), len(label_paths))
-    # print(image_paths, label_paths)
+    image_paths = sorted(glob.glob(str(x.image_folder) + "*." + x.image_format))
+    label_paths = sorted(glob.glob(str(x.label_folder) + "*." + x.label_format))
     # Creating output folders for patch size images
     os.mkdir(x.output_folder + "image/")
     os.mkdir(x.output_folder + "label/")
@@ -18,15 +16,16 @@ def patch_gen(x):
     output_label_folder = x.output_folder + "label/"
 
     outdriver = gdal.GetDriverByName("GTiff")
-
     # Clipping images with patch_size
+    format_len_i = len(x.image_format)+1
+    format_len_l = len(x.label_format)+1
     for h in range(len(image_paths)):
         image_path = image_paths[h]
         label_path = label_paths[h]
         _, image_name = os.path.split(image_path)
-        image_name = image_name[:-5]
-        __, label_name = os.path.split(label_path)
-        label_name = label_name[:-4]
+        image_name = image_name[:-format_len_i]
+        __, label_name = os.path.split(label_path)  
+        label_name = label_name[:-format_len_l]
         print(image_name, label_name)
         if image_name == label_name:
             image = gdal.Open(image_path)
@@ -58,11 +57,11 @@ def patch_gen(x):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--image_folder", type=str, help="Input image folder with images")
-    parser.add_argument("--image_type", type=str, help="Image type")
-    parser.add_argument("--label_folder", type=str, help="Input label folder with label images")
-    parser.add_argument("--label_type", type=str, help="Label type")
-    parser.add_argument("--patch_size", type=int, help="Patch size to split the tiles", default=256)
+    parser.add_argument("--image_folder", type=str, help="Folder of input images")
+    parser.add_argument("--image_format", type=str, help="Image format", default="tif")
+    parser.add_argument("--label_folder", type=str, help="Folder of corresponding labels")
+    parser.add_argument("--label_format", type=str, help="Label format", default="tif")
+    parser.add_argument("--patch_size", type=int, help="Patch size to split the tiles/images", default=256)
     parser.add_argument("--overlap", type=int, help="args.overlap between two patches", default=0)
     parser.add_argument("--output_folder", type=str, help="Output folder to create the images and labels")
     args = parser.parse_args()

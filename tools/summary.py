@@ -1,6 +1,5 @@
 import argparse
-from models import unet_model, resunet_model, segnet_model, DLinkNet_model
-from models.LinkNet_model import LinkNet
+from models import unet_model, resunet_model, segnet_model
 
 
 def summary(args):

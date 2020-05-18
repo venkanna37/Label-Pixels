@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 from tensorflow.keras.models import load_model
 import argparse
-from models import resunet_model, resunet_novel2, unet_model, segnet_model
+from models import resunet_model, unet_model, segnet_model
 
 
 def accuracy(args):
@@ -30,7 +30,7 @@ def accuracy(args):
     test_image_paths = []
     test_label_paths = []
     test_pred_paths = []
-    with open(paths_file, 'r') as csvfile:
+    with open(paths_file, 'r', newline='\n') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
         for row in plots:
             test_image_paths.append(row[0])
@@ -89,6 +89,6 @@ if __name__ == '__main__':
     parser.add_argument("--input_shape", nargs='+', type=int, help="Input shape of the model (rows, columns, channels)")
     parser.add_argument("--weights", type=str, help="Name and path of the trained model")
     parser.add_argument("--csv_paths", type=str, help="CSV file with image and label paths")
-    parser.add_argument("--onehot", type=str, help="yes or no, yes if prediction is onehot ")
+    parser.add_argument("--onehot", type=str, help="yes or no, yes if prediction is onehot ", default="no")
     args = parser.parse_args()
     accuracy(args)

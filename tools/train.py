@@ -17,13 +17,14 @@ def train(args):
     valid_image_paths = []
     valid_label_paths = []
 
-    with open(train_csv, 'r') as csvfile:
+    with open(train_csv, 'r', newline='\n') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
         for row in plots:
+            # print(row)
             image_paths.append(row[0])
             label_paths.append(row[1])
 
-    with open(valid_csv, 'r') as csvfile:
+    with open(valid_csv, 'r', newline='\n') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
         for row in plots:
             valid_image_paths.append(row[0])
@@ -45,10 +46,9 @@ def train(args):
     train_steps = len(image_paths) // args.batch_size
     valid_steps = len(valid_image_paths) // args.batch_size
 
-    path = "../trained_models/"
     model_name = args.model_name
-    model_file = path + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".hdf5"
-    log_file = path + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".log"
+    model_file = model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".hdf5"
+    log_file = model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".log"
     # Training the model
     model_checkpoint = ModelCheckpoint(model_file, monitor='loss', verbose=1, save_best_only=True)
     csv_logger = CSVLogger(log_file, separator=',', append=False)

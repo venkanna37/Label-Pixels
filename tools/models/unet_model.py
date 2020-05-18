@@ -8,6 +8,8 @@ def down_block(x, filters, kernel_size=(3, 3), padding="same", strides=1):
     c = keras.layers.Conv2D(filters, kernel_size, padding=padding, strides=strides, activation="relu")(c)
     p = keras.layers.MaxPool2D((2, 2), (2, 2))(c)
     return c, p
+
+
 # Passing arguments for commands line
 def add__parser(subparser):
     parser = subparser.add_parser("unet_summary", help="UNet Model", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -35,11 +37,11 @@ image_shape = 128
 
 def UNet(args):
     input_shape = tuple(args.input_shape)
-    f = [64, 128, 256, 512, 1024]
+    f = [16, 32, 64, 128, 256]
     inputs = keras.layers.Input(input_shape)
 
     p0 = inputs
-    c1, p1 = down_block(p0, f[0])  # 128
+    c1, p1 = down_block(p0, f[0], kernel_size=(5,5))  # 128
     c2, p2 = down_block(p1, f[1])  # 64 -> 32
     c3, p3 = down_block(p2, f[2])  # 32 -> 16
     c4, p4 = down_block(p3, f[3])  # 16->8

@@ -46,9 +46,9 @@ def csv_gen(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--image_folder", type=str, help="Image folder")
-    parser.add_argument("--image_format", type=str, help="Image format")
+    parser.add_argument("--image_format", type=str, help="Image format", default="tif")
     parser.add_argument("--label_folder", type=str, help="Label folder")
-    parser.add_argument("--label_format", type=str, help="Label format")
+    parser.add_argument("--label_format", type=str, help="Label format", default="tif")
     parser.add_argument("--pred_folder", type=str, help="pred_folder", default=None)
     parser.add_argument("--pred_format", type=str, help=" pred_format", default=None)
     parser.add_argument("--output_csv", type=str, help="File path of csv that gives image, label paths")
