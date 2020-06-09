@@ -1,6 +1,8 @@
-##  MapChey
-MapChey is a tool designed mainly for extracting the road network from the remote sensing imagery and it can be used in other applications applications to label every pixel in the image ( Semantic segmentation). This is part of my MSc research project.
-To label every pixel, some list of tools implemented.
+##  LabelPixels
+LabelPixels is a tool designed mainly for extracting the road network from the remote sensing imagery and it can be
+ used in other applications applications to label every pixel in the image ( Semantic segmentation).
+  This is part of my MSc research project (Automatic Road Extraction from High-Resolution Remote Sensing Imagery
+  Using Fully Convolutional Networks and Transfer Learning).
 
 ####  Clone repository and install packages
 ```commandline
@@ -147,9 +149,7 @@ Example:
 python tile_predict2.py --model resunet --input_shape 256 256 3 --weights ..\\trained_models\\resunet_mass_256_300_27_12_19.hdf5 --csv_paths ..\\paths\\sample_tiles.csv --patch_size 256 --tile_size 1500 --output_folder ..\\data\\mass_sample\\test\\pred_resunet\\
 ```
 
-#### Other tools
-
-#### 1. Summary of the Model
+#### 6. Summary of the Model
 shows the summary of the models
 ```commandline
 usage: summary.py [-h] [--model MODEL]
@@ -165,6 +165,20 @@ Example:
 python summary.py --model unet --input_shape 256 256 3
 ```
 
-####  2. Rasterize
-####  3. Visualize Kernels
-####  2. Visualize test data
+####  7. Rasterize
+```commandline
+usage: rasterize.py [-h] [--raster RASTER] [--vector VECTOR] [--buffer BUFFER]
+                    [--output_file OUTPUT_FILE] [--attribute ATTRIBUTE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --raster RASTER       Raster file name with directory
+  --vector VECTOR       Vector file name with directory
+  --buffer BUFFER       Buffer width of line feature
+  --output_file OUTPUT_FILE
+                        Output image name with directory
+  --attribute ATTRIBUTE
+                        Attribute from the vector file
+Example:
+python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --vector ..\\data\\spacenet\\vector\\spacenet_chip0.shp --buffer 3 --output_file ..\\data\\spacenet\\binary\\test.tif
+```
