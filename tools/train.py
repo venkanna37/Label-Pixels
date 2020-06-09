@@ -61,12 +61,12 @@ def train(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, help="Model name, should be from unet, resunet, segnet")
+    parser.add_argument("--model", type=str, help="Model name (from unet, resunet, segnet")
     parser.add_argument("--train_csv", type=str, help="CSV file with image and label paths from training data")
     parser.add_argument("--valid_csv", type=str, help="CSV file with image and label paths from validation data")
     parser.add_argument("--input_shape", nargs='+', type=int, help="Input shape of the model (rows, columns, channels)")
-    parser.add_argument("--batch_size", type=int, help="Batch size in each epoch")
+    parser.add_argument("--batch_size", type=int, help="Batch size")
     parser.add_argument("--epochs", type=int, help="Number of epochs")
-    parser.add_argument("--model_name", type=str, help="Trained model name")
+    parser.add_argument("--model_name", type=str, help="Trained model name with directory and without format")
     args = parser.parse_args()
     train(args)

@@ -85,10 +85,10 @@ def accuracy(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, help="Name of the model, should be from unet, resunet, segnet")
+    parser.add_argument("--model", type=str, help="Name of the model (from unet, resunet, or segnet)")
     parser.add_argument("--input_shape", nargs='+', type=int, help="Input shape of the model (rows, columns, channels)")
     parser.add_argument("--weights", type=str, help="Name and path of the trained model")
     parser.add_argument("--csv_paths", type=str, help="CSV file with image and label paths")
-    parser.add_argument("--onehot", type=str, help="yes or no, yes if prediction is onehot ", default="no")
+    parser.add_argument("--onehot", type=str, help="yes or no, yes if predictions are onehot ", default="no")
     args = parser.parse_args()
     accuracy(args)

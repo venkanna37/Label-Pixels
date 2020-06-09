@@ -8,7 +8,7 @@ import argparse
 def patch_gen(x):
     # Reading all the images and labels from input folders
     image_paths = sorted(glob.glob(str(x.image_folder) + "*." + x.image_format))
-    label_paths = sorted(glob.glob(str(x.label_folder) + "*." + x.label_format))
+    label_paths = sorted(glob.glob(str(x.label_folder) + "*." + x.label_format  ))
     # Creating output folders for patch size images
     os.mkdir(x.output_folder + "image/")
     os.mkdir(x.output_folder + "label/")
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     parser.add_argument("--label_folder", type=str, help="Folder of corresponding labels")
     parser.add_argument("--label_format", type=str, help="Label format", default="tif")
     parser.add_argument("--patch_size", type=int, help="Patch size to split the tiles/images", default=256)
-    parser.add_argument("--overlap", type=int, help="args.overlap between two patches", default=0)
-    parser.add_argument("--output_folder", type=str, help="Output folder to create the images and labels")
+    parser.add_argument("--overlap", type=int, help="Overlap between two patches", default=0)
+    parser.add_argument("--output_folder", type=str, help="Output folder to save images and labels")
     args = parser.parse_args()
     patch_gen(args)
