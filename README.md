@@ -1,6 +1,6 @@
 ##  Label-Pixels
-Label-Pixels is a tool to label pixels, designed for extracting the road network from the remote sensing imagery and it can be
- used in other applications applications to label every pixel in the image ( Semantic segmentation).
+Label-Pixels is a tool to label pixels, designed for extracting the road network from remote sensing imagery and it can be
+ used in other applications applications to label every pixels in the image ( Semantic segmentation).
   This is part of my MSc research project (Automatic Road Extraction from High-Resolution Remote Sensing Imagery
   using Fully Convolutional Networks and Transfer Learning).
 
