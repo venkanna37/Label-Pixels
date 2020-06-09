@@ -185,9 +185,9 @@ python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --ve
 
 #### Sample Output
 <p align="center">
-  <img width="900" height="1250"  src="/data/mass_sota.png">
+  <img width="900" height="1300"  src="/data/mass_sota.png">
   </p>
   
   
-#### Any issues
-Mail-id:  g.venkanna37@gmail.com
+#### Any problem with code?
+Open [issue](https://github.com/venkanna37/Label-Pixels/issues) or mail me :point_right:  g.venkanna37@gmail.com
