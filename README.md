@@ -185,7 +185,7 @@ python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --ve
 
 #### Sample Output
 <p align="center">
-  <img width="600" height="1000"  src="/data/mass_sota.png">
+  <img width="600" height="750"  src="/data/mass_sota.png">
   </p>
   
   
