@@ -6,7 +6,7 @@ Label-Pixels is a tool for semantic segmentation of remote sensing images using 
 
 ####  Clone repository and install packages
 ```commandline
-git clone https://github.com/venkanna37/RoadMapper.git
+https://github.com/venkanna37/Label-Pixels.git
 conda env create -f environment.yml
 ```
 ####  1. Patch Generation
