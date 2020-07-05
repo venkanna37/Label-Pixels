@@ -37,7 +37,7 @@ image_shape = 128
 
 def UNet(args):
     input_shape = tuple(args.input_shape)
-    f = [64, 128, 256, 512, 1024]
+    f = [16, 32, 64, 128, 256]
     inputs = keras.layers.Input(input_shape)
 
     p0 = inputs
