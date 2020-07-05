@@ -8,7 +8,7 @@ import argparse
 def patch_gen(x):
     # Reading all the images and labels from input folders
     image_paths = sorted(glob.glob(str(x.image_folder) + "*." + x.image_format))
-    label_paths = sorted(glob.glob(str(x.label_folder) + "*." + x.label_format  ))
+    label_paths = sorted(glob.glob(str(x.label_folder) + "*." + x.label_format))
     # Creating output folders for patch size images
     os.mkdir(x.output_folder + "image/")
     os.mkdir(x.output_folder + "label/")
@@ -24,7 +24,7 @@ def patch_gen(x):
         label_path = label_paths[h]
         _, image_name = os.path.split(image_path)
         image_name = image_name[:-format_len_i]
-        __, label_name = os.path.split(label_path)  
+        __, label_name = os.path.split(label_path)
         label_name = label_name[:-format_len_l]
         print(image_name, label_name)
         if image_name == label_name:

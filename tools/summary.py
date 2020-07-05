@@ -29,5 +29,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, help="Model name, should be from unet, resunet, segnet")
     parser.add_argument("--input_shape", nargs='+', type=int, help="Input shape of the model (rows, columns, channels)")
+    parser.add_argument("--num_classes", type=int, help="Number of classes in label data")
     args = parser.parse_args()
     summary(args)

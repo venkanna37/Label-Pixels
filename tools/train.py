@@ -41,14 +41,13 @@ def train(args):
 
     model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["acc"])
     input_shape = args.input_shape
-    train_gen = datagen.DataGenerator(image_paths, label_paths, batch_size=args.batch_size, n_channels=input_shape[2], patch_size=input_shape[1], shuffle=True)
+    train_gen = datagen.DataGenerator(image_paths, label_paths, batch_size=args.batch_size, n_classes=args.num_classes, n_channels=input_shape[2], patch_size=input_shape[1], shuffle=True)
     valid_gen = datagen.DataGenerator(valid_image_paths, valid_label_paths, batch_size=args.batch_size, n_channels=input_shape[2], patch_size=input_shape[1], shuffle=True)
     train_steps = len(image_paths) // args.batch_size
     valid_steps = len(valid_image_paths) // args.batch_size
-
-    model_name = args.model_name
+    model_name = args.model
     model_file = model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".hdf5"
-    log_file = model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".log"
+    log_file = model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".csv"
     # Training the model
     model_checkpoint = ModelCheckpoint(model_file, monitor='val_loss', verbose=1, save_best_only=True)
     csv_logger = CSVLogger(log_file, separator=',', append=False)
@@ -61,12 +60,12 @@ def train(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, help="Model name (from unet, resunet, segnet")
+    parser.add_argument("--model", type=str, help="Model name (from unet, resunet, segnet)")
     parser.add_argument("--train_csv", type=str, help="CSV file with image and label paths from training data")
     parser.add_argument("--valid_csv", type=str, help="CSV file with image and label paths from validation data")
     parser.add_argument("--input_shape", nargs='+', type=int, help="Input shape of the model (rows, columns, channels)")
     parser.add_argument("--batch_size", type=int, help="Batch size")
+    parser.add_argument("--num_classes", type=int, help="Number of classes")
     parser.add_argument("--epochs", type=int, help="Number of epochs")
-    parser.add_argument("--model_name", type=str, help="Trained model name with directory and without format")
     args = parser.parse_args()
     train(args)

@@ -10,7 +10,13 @@ https://github.com/venkanna37/Label-Pixels.git
 conda env create -f environment.yml
 ```
 ####  1. Patch Generation
-This generates the patches from tiles/images and corresponding labels
+* This generates the patches from tiles/images and corresponding labels to feed the network
+* Patches saves in three folders(set_name: train, test and valid) in single directory(output_folder), those three directories are train, test and valid
+* To generate patches for train, test and valid set, the command needs to be run three times
+* The advantages of using patch genration are
+ 1. while training the model, only patches of batch size select randomly. Finally, reduces the using memory.
+ 2. Can deal with Big datasets
+
 ```commandline
 usage: patch_gen.py [-h] [--image_folder IMAGE_FOLDER]
                     [--image_format IMAGE_FORMAT]
@@ -35,11 +41,11 @@ optional arguments:
                         Output folder to save images and labels
 
 Example:
-python patch_gen.py --image_folder ..\\data\\mass_sample\\test\\image\\ --image_format tiff --label_folder ..\\data\\mass_sample\\test\\label\\ --label_format tif --patch_size 256 --output_folder ..\\data\\mass_patches\\
+python patch_gen.py --image_folder ..\\data\\mass_sample\\test\\image\\ --image_format tiff --label_folder ..\\data\\mass_sample\\test\\roads_and_buildings\\ --label_format tif --patch_size 256 --output_folder ..\\data\\mass_patches\\
 ```
 
 #### 2. CSV Paths
-This creates the paths of patches in the csv file
+Instead of reading patches from directory, this creates the paths of patches in the csv file and these files will be used to in training and testing the models
 ```commandline
 usage: csv_paths.py [-h] [--image_folder IMAGE_FOLDER]
                     [--image_format IMAGE_FORMAT]
@@ -57,15 +63,11 @@ optional arguments:
                         Label folder
   --label_format LABEL_FORMAT
                         Label format
-  --pred_folder PRED_FOLDER
-                        Predicted images folder
-  --pred_format PRED_FORMAT
-                        Predicted images format
   --output_csv OUTPUT_CSV
                         CSV file name with directory
 
 Example:
-python csv_paths.py --image_folder ..\\data\\mass_patches\\image\\ --image_format tif --label_folder ..\\data\\mass_patches\\label\\ --label_format tif --output_csv ..\\paths\\sample.csv
+python csv_paths.py --image_folder ..\\data\\mass_patches\\image\\ --image_format tif --label_folder ..\\data\\mass_patches\\label\\ --label_format tif --output_csv ..\\paths\\data_rd.csv
 ```
 
 ####  3. Training
@@ -90,11 +92,9 @@ optional arguments:
   --batch_size BATCH_SIZE
                         Batch size
   --epochs EPOCHS       Number of epochs
-  --model_name MODEL_NAME
-                        Trained model name with directory and without format
 
 Example:
-python train.py --model unet --train_csv ..\\paths\\sample.csv --valid_csv ..\\paths\\sample.csv --input_shape 256 256 3 --batch_size 1 --epochs 50 --model_name ..\\trained_models\\sample_256_
+python train.py --model unet --train_csv ..\\paths\\data_rd.csv --valid_csv ..\\paths\\data_rd.csv --input_shape 256 256 3 --batch_size 1 --num_classes 3 --epochs 100
 ```
 
 ####  4. Accuracy

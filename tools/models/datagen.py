@@ -1,6 +1,7 @@
 import numpy as np
 import keras
 import gdal
+from keras.utils import to_categorical
 
 
 class DataGenerator(keras.utils.Sequence):
@@ -23,12 +24,13 @@ class DataGenerator(keras.utils.Sequence):
     def __getitem__(self, index):
         'Generate one batch of data'
         # Generate indexes of the batch
+        n_classes = self.n_classes
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
         # Find list of IDs
         list_image_temp = [self.image_paths[k] for k in indexes]
         list_label_temp = [self.label_paths[k] for k in indexes]
         # Generate data
-        X, y = self.__data_generation(list_image_temp, list_label_temp)
+        X, y = self.__data_generation(list_image_temp, list_label_temp, n_classes)
         return X, y
 
     def on_epoch_end(self):
@@ -37,7 +39,7 @@ class DataGenerator(keras.utils.Sequence):
         if self.shuffle == True:
             np.random.shuffle(self.indexes)
 
-    def __data_generation(self, image_paths, label_paths):
+    def __data_generation(self, image_paths, label_paths, n_classes):
         'Generates data containing batch_size samples'  # X : (n_samples, *dim, n_channels)
         # Initialization
         X = []
@@ -51,6 +53,7 @@ class DataGenerator(keras.utils.Sequence):
             _image = _image.transpose(1, 2, 0)
             _label = np.array(_label.ReadAsArray()) / 255
             _label = np.expand_dims(_label, axis=-1)
+            _label = to_categorical(_label, num_classes=n_classes)
             X.append(_image)
             y.append(_label)
         X = np.array(X)

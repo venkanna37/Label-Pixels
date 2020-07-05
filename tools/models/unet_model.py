@@ -37,11 +37,11 @@ image_shape = 128
 
 def UNet(args):
     input_shape = tuple(args.input_shape)
-    f = [16, 32, 64, 128, 256]
+    f = [64, 128, 256, 512, 1024]
     inputs = keras.layers.Input(input_shape)
 
     p0 = inputs
-    c1, p1 = down_block(p0, f[0], kernel_size=(5,5))  # 128
+    c1, p1 = down_block(p0, f[0])  # 128
     c2, p2 = down_block(p1, f[1])  # 64 -> 32
     c3, p3 = down_block(p2, f[2])  # 32 -> 16
     c4, p4 = down_block(p3, f[3])  # 16->8
@@ -53,6 +53,9 @@ def UNet(args):
     u3 = up_block(u2, c2, f[1])  # 32 -> 64
     u4 = up_block(u3, c1, f[0])  # 64 -> 128
 
-    outputs = keras.layers.Conv2D(1, (1, 1), padding="same", activation="sigmoid")(u4)
+    if args.num_classes != 1:
+        outputs = keras.layers.Conv2D(args.num_classes, (1, 1), padding="same", activation="softmax")(u4)
+    else:
+        outputs = keras.layers.Conv2D(1, (1, 1), padding="same", activation="sigmoid")(u4)
     model = keras.models.Model(inputs, outputs)
     return model

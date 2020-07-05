@@ -150,7 +150,7 @@ def VGG16_encoder(input_shape, init=False):
     return model
 
 
-def create_segnet(args, nb_class=1, indices=True, ker_init="he_normal") -> tModel:
+def create_segnet(args, indices=True, ker_init="he_normal") -> tModel:
 
     input_shape = tuple(args.input_shape)
     encoder = VGG16_encoder(input_shape, init=False)
@@ -189,13 +189,13 @@ def create_segnet(args, nb_class=1, indices=True, ker_init="he_normal") -> tMode
     x = Activation('relu')(BatchNormalization()(Conv2D(L[14].filters, L[14].kernel_size, padding=L[14].padding, kernel_initializer=ker_init)(x)))
     # Block 1
     if indices: x = DePool2D(L[15], size=L[15].pool_size)(x)
-    else:       x = UpSampling2D(   size=L[15].pool_size)(x)
+    else:       x = UpSampling2D(size=L[15].pool_size)(x)
     x = Activation('relu')(BatchNormalization()(Conv2D(L[16].filters, L[16].kernel_size, padding=L[16].padding, kernel_initializer=ker_init)(x)))
     x = Activation('relu')(BatchNormalization()(Conv2D(L[17].filters, L[17].kernel_size, padding=L[17].padding, kernel_initializer=ker_init)(x)))
 
-    x = Conv2D(nb_class, (1, 1), padding='valid', kernel_initializer=ker_init)(x)
+    x = Conv2D(args.num_classes, (1, 1), padding='valid', kernel_initializer=ker_init)(x)
 
-    if nb_class!=1:
+    if args.num_classes != 1:
         x = Activation('softmax')(x)
     else:
         x = Activation('sigmoid')(x)
