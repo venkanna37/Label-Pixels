@@ -42,7 +42,7 @@ def train(args):
     model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["acc"])
     input_shape = args.input_shape
     train_gen = datagen.DataGenerator(image_paths, label_paths, batch_size=args.batch_size, n_classes=args.num_classes, n_channels=input_shape[2], patch_size=input_shape[1], shuffle=True)
-    valid_gen = datagen.DataGenerator(valid_image_paths, valid_label_paths, batch_size=args.batch_size, n_channels=input_shape[2], patch_size=input_shape[1], shuffle=True)
+    valid_gen = datagen.DataGenerator(valid_image_paths, valid_label_paths, batch_size=args.batch_size, n_classes=args.num_classes, n_channels=input_shape[2], patch_size=input_shape[1], shuffle=True)
     train_steps = len(image_paths) // args.batch_size
     valid_steps = len(valid_image_paths) // args.batch_size
     model_name = args.model
