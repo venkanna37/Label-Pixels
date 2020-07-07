@@ -2,6 +2,7 @@ import csv
 import gdal
 import numpy as np
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import multilabel_confusion_matrix
 from tensorflow.keras.models import load_model
 import argparse
 from models import resunet_model, unet_model, segnet_model
@@ -29,9 +30,8 @@ def accuracy(args):
         for row in plots:
             test_image_paths.append(row[0])
             test_label_paths.append(row[1])
-
-    tn, fp, fn, tp = 0, 0, 0, 0
-    rows = []
+    y = []
+    y_pred = []
     for i in range(len(test_image_paths)):
         image = gdal.Open(test_image_paths[i])
         image_array = np.array(image.ReadAsArray()) / 255
@@ -41,35 +41,37 @@ def accuracy(args):
         label_array = np.expand_dims(label_array, axis=-1)
         fm = np.expand_dims(image_array, axis=0)
         result_array = model.predict(fm)
-        print(result_array[0][0][0])
-        print(result_array.shape)
         result_array = np.argmax(result_array[0], axis=2)
-
-        print(np.unique(result_array))
         result_array = np.squeeze(result_array)
-        A = np.around(label_array.flatten())
-        B = np.around(result_array.flatten())
-        cm = confusion_matrix(A, B)
-        if len(cm) == 1:
-            rows.append([test_image_paths[i], test_label_paths[i], cm[0][0], 0, 0, 0])
-            tn += cm[0][0]
-        else:
-            rows.append([test_image_paths[i], test_label_paths[i], cm[0][0], cm[0][1], cm[1][0], cm[1][1]])
-            tn += cm[0][0]
-            fp += cm[0][1]
-            fn += cm[1][0]
-            tp += cm[1][1]
+        y.append(np.around(label_array))
+        y_pred.append(result_array)
         print("Predicted " + str(i + 1) + " Images")
+    # print(len(np.array(y).flatten()), len(np.array(y_pred).flatten()))
+    print("\n")
+    cm = confusion_matrix(np.array(y).flatten(), np.array(y_pred).flatten())
+    cm_multi = multilabel_confusion_matrix(np.array(y).flatten(), np.array(y_pred).flatten())
+    print("Confusion Matrix " + "\n")
+    print(cm, "\n")
+    accuracy = np.trace(cm/np.sum(cm))
+    print("Overal Accuracy: ", round(accuracy, 3), "\n")
 
-    iou = tp / (tp + fp + fn)
-    f_score = (2 * tp) / (2 * tp + fp + fn)
+    mean_iou = 0
+    mean_f1 = 0
+    for j in range(len(cm_multi)):
+        print("Class: " + str(j))
+        iou = cm_multi[j][1][1] / (cm_multi[j][1][1] + cm_multi[j][0][1] + cm_multi[j][1][0])
+        f1 = (2 * cm_multi[j][1][1]) / (2 * cm_multi[j][1][1] + cm_multi[j][0][1] + cm_multi[j][1][0])
+        precision = cm_multi[j][1][1] / (cm_multi[j][1][1] + cm_multi[j][0][1])
+        recall = cm_multi[j][1][1] / (cm_multi[j][1][1] + cm_multi[j][1][0])
+        mean_iou  += iou
+        mean_f1 += f1
+        print("IoU Score: ", round(iou, 3))
+        print("F1-Measure: ", round(f1, 3))
+        print("Precision: ", round(precision, 3))
+        print("Recall: ", round(recall, 3), "\n")
+    print("Mean IoU Score: ", round(mean_iou/len(cm_multi), 3))
+    print("Mean F1-Measure: ", round(mean_f1/len(cm_multi), 3))
 
-    print("True Possitive: " + str(tp))
-    print("False Possitive: " + str(fp))
-    print("True Negative: " + str(tn))
-    print("False Negative: " + str(tp) + "\n")
-    print("IOU Score: " + str(iou))
-    print("F-Score: " + str(f_score))
 
 
 if __name__ == '__main__':
