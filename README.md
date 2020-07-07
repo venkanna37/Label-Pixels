@@ -10,7 +10,7 @@ git clone https://github.com/venkanna37/Label-Pixels.git
 
 ```
 #### Install packages
-Install with yml file or Can run with installing three packages in Anaconda
+Install with yml file Installing three packages in Anaconda are enough
 ```commandline
 conda env create -f environment.yml
 ```
@@ -194,11 +194,13 @@ Example:
 python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --vector ..\\data\\spacenet\\vector\\spacenet_chip0.shp --buffer 3 --output_file ..\\data\\spacenet\\binary\\test.tif
 ```
 
-#### Sample Output
+#### Sample Outputs
 <p align="center">
   <img width="900" height="1300"  src="/data/mass_sota.png">
   </p>
-  
+  <p align="center">
+  <img width="900" height="250"  src="/data/label-pixels_0001.png">
+  </p>
 ### Benchmark datasets
 1. Massachusetts Benchmark datasets for Road and Building extraction
 [https://academictorrents.com/browse.php?search=Volodymyr+Mnih](https://academictorrents.com/browse.php?search=Volodymyr+Mnih)
