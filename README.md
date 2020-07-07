@@ -199,10 +199,10 @@ python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --ve
   <img width="900" height="1300"  src="/data/mass_sota.png">
   </p>
   <p align="center">
-  <img width="900" height="250"  src="/data/label-pixels_0001.png">
+  <img width="900" height="330"  src="/data/label-pixels_0001.png">
   </p>
 ### Benchmark datasets
-1. Massachusetts Benchmark datasets for Road and Building extraction
+1. Massachusetts Benchmark datasets for Road and Building extraction <br/>
 [https://academictorrents.com/browse.php?search=Volodymyr+Mnih](https://academictorrents.com/browse.php?search=Volodymyr+Mnih)
 2. List of Benchmark datasets for semantic segmentation, object detection from remote sensing imagery
 [https://github.com/chrieke/awesome-satellite-imagery-datasets](https://github.com/chrieke/awesome-satellite-imagery-datasets)
