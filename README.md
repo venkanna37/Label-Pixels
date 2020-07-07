@@ -4,10 +4,21 @@ Label-Pixels is a tool for semantic segmentation of remote sensing images using 
   This is part of my MSc research project (Automatic Road Extraction from High-Resolution Remote Sensing Imagery
   using Fully Convolutional Networks and Transfer Learning).
 
-####  Clone repository and install packages
+####  Clone repository
 ```commandline
-https://github.com/venkanna37/Label-Pixels.git
+git clone https://github.com/venkanna37/Label-Pixels.git
+
+```
+#### Install packages
+Install with yml file or Can run with installing three packages in Anaconda
+```commandline
 conda env create -f environment.yml
+```
+OR
+```commandline
+conda install -c conda-forge keras
+conda install -c conda-forge gdal
+conda install -c anaconda scikit-learn
 ```
 ####  1. Patch Generation
 * This generates the patches from tiles/images and corresponding labels to feed the network
@@ -117,7 +128,7 @@ optional arguments:
   --onehot ONEHOT       yes or no, yes if predictions are onehot
 
 Example:
-python accuracy.py --model unet --input_shape 256 256 3 --weights ..\\trained_models\\unet_mass_256_300_05_03_20.hdf5 --csv_paths ..\\paths\\sample.csv
+python accuracy.py --model unet --input_shape 256 256 3 --weights ..\\trained_models\\unet300_06_07_20.hdf5 --csv_paths ..\\paths\\data_rd.csv --num_classes 3
 ```
 
 ####  5. Prediction
@@ -146,7 +157,7 @@ optional arguments:
                         Output path of the predicted images
 
 Example:
-python tile_predict2.py --model resunet --input_shape 256 256 3 --weights ..\\trained_models\\resunet_mass_256_300_27_12_19.hdf5 --csv_paths ..\\paths\\sample_tiles.csv --patch_size 256 --tile_size 1500 --output_folder ..\\data\\mass_sample\\test\\pred_resunet\\
+python tile_predict.py --model unet --input_shape 256 256 3 --weights ..\\trained_models\\unet300_06_07_20.hdf5 --image_folder ..\\data\\mass_sample\\test\\image\\ --image_format tiff --output_folder ..\\data\\
 ```
 
 #### 6. Summary of the Model
@@ -188,6 +199,11 @@ python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --ve
   <img width="900" height="1300"  src="/data/mass_sota.png">
   </p>
   
-  
+### Benchmark datasets
+1. Massachusetts Benchmark datasets for Road and Building extraction
+[https://academictorrents.com/browse.php?search=Volodymyr+Mnih](https://academictorrents.com/browse.php?search=Volodymyr+Mnih)
+2. List of Benchmark datasets for semantic segmentation, object detection from remote sensing imagery
+[https://github.com/chrieke/awesome-satellite-imagery-datasets](https://github.com/chrieke/awesome-satellite-imagery-datasets)
+
 #### Any problem with code?
 Open [issue](https://github.com/venkanna37/Label-Pixels/issues) or mail me :point_right:  g.venkanna37@gmail.com

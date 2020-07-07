@@ -81,6 +81,5 @@ if __name__ == '__main__':
     parser.add_argument("--weights", type=str, help="Name and path of the trained model")
     parser.add_argument("--csv_paths", type=str, help="CSV file with image and label paths")
     parser.add_argument("--num_classes", type=int, help="Number of classes")
-    parser.add_argument("--onehot", type=str, help="yes or no, yes if predictions are onehot ", default="no")
     args = parser.parse_args()
     accuracy(args)
