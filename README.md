@@ -21,7 +21,7 @@ conda install -c anaconda scikit-learn
 #### Usage
 
 <p align="center">
-  <img width="900" height="180"  src="/data/methods.png">
+  <img width="900" height="180"  src="/data/methodology.png">
 </p>
 
 ####  1. Patch Generation
@@ -196,10 +196,10 @@ Example:
 python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --vector ..\\data\\spacenet\\vector\\spacenet_chip0.shp --buffer 3 --output_file ..\\data\\spacenet\\binary\\test.tif
 ```
 
-#### Sample Outputs
+#### Segmentation outputs Outputs
 <p align="center">
   <img width="900" height="1300"  src="/data/mass_sota.png">
-  <img width="900" height="330"  src="/data/label-pixels_0001.png">
+  <img width="900" height="330"  src="/data/mass_roads_and_buildings.png">
 </p>
 
 #### Benchmark datasets
