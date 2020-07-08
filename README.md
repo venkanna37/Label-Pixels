@@ -196,7 +196,7 @@ Example:
 python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --vector ..\\data\\spacenet\\vector\\spacenet_chip0.shp --buffer 3 --output_file ..\\data\\spacenet\\binary\\test.tif
 ```
 
-#### Segmentation outputs Outputs
+#### Segmentation Outputs
 <p align="center">
   <img width="900" height="1300"  src="/data/mass_sota.png">
   <img width="900" height="330"  src="/data/mass_roads_and_buildings.png">
