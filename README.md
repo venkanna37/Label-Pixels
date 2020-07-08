@@ -7,10 +7,8 @@ Label-Pixels is a tool for semantic segmentation of remote sensing images using 
 ####  Clone repository
 ```commandline
 git clone https://github.com/venkanna37/Label-Pixels.git
-
 ```
 #### Install packages
-Install with yml file Installing three packages in Anaconda are enough
 ```commandline
 conda env create -f environment.yml
 ```
@@ -20,13 +18,17 @@ conda install -c conda-forge keras
 conda install -c conda-forge gdal
 conda install -c anaconda scikit-learn
 ```
-####  1. Patch Generation
-* This generates the patches from tiles/images and corresponding labels to feed the network
-* Patches saves in three folders(set_name: train, test and valid) in single directory(output_folder), those three directories are train, test and valid
-* To generate patches for train, test and valid set, the command needs to be run three times
-* The advantages of using patch genration are
- 1. while training the model, only patches of batch size select randomly. Finally, reduces the using memory.
- 2. Can deal with Big datasets
+#### Usage
+
+<p align="center">
+  <img width="900" height="130"  src="/data/methods.png">
+</p>
+
+#####  1. Patch Generation
+* Generate patches from Images/Tiles
+* To generate patches for train, test and valid sets, the command needs to be run three times
+* Name of image and label files should be same
+* Patches would be created to use data generators in KERAS and reduce the memory consumption
 
 ```commandline
 usage: patch_gen.py [-h] [--image_folder IMAGE_FOLDER]
@@ -55,14 +57,13 @@ Example:
 python patch_gen.py --image_folder ..\\data\\mass_sample\\test\\image\\ --image_format tiff --label_folder ..\\data\\mass_sample\\test\\roads_and_buildings\\ --label_format tif --patch_size 256 --output_folder ..\\data\\mass_patches\\
 ```
 
-#### 2. CSV Paths
-Instead of reading patches from directory, this creates the paths of patches in the csv file and these files will be used to in training and testing the models
+##### 2. CSV Paths
+* Saves location of images and labels in CSV file instead of reading patches from folders directly
 ```commandline
 usage: csv_paths.py [-h] [--image_folder IMAGE_FOLDER]
                     [--image_format IMAGE_FORMAT]
                     [--label_folder LABEL_FOLDER]
-                    [--label_format LABEL_FORMAT] [--pred_folder PRED_FOLDER]
-                    [--pred_format PRED_FORMAT] [--output_csv OUTPUT_CSV]
+                    [--label_format LABEL_FORMAT] [--output_csv OUTPUT_CSV]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -81,14 +82,14 @@ Example:
 python csv_paths.py --image_folder ..\\data\\mass_patches\\image\\ --image_format tif --label_folder ..\\data\\mass_patches\\label\\ --label_format tif --output_csv ..\\paths\\data_rd.csv
 ```
 
-####  3. Training
-Training various networks such as SegNet, Unet and ResUNet
+#####  3. Training
+* Training FCNs for semantic segmentation
 ```commandline
 usage: train.py [-h] [--model MODEL] [--train_csv TRAIN_CSV]
                 [--valid_csv VALID_CSV]
                 [--input_shape INPUT_SHAPE [INPUT_SHAPE ...]]
-                [--batch_size BATCH_SIZE] [--epochs EPOCHS]
-                [--model_name MODEL_NAME]
+                [--batch_size BATCH_SIZE] [--num_classes NUM_CLASSES]
+                [--epochs EPOCHS]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -102,43 +103,45 @@ optional arguments:
                         Input shape of the model (rows, columns, channels)
   --batch_size BATCH_SIZE
                         Batch size
+  --num_classes NUM_CLASSES
+                        Number of classes
   --epochs EPOCHS       Number of epochs
 
 Example:
 python train.py --model unet --train_csv ..\\paths\\data_rd.csv --valid_csv ..\\paths\\data_rd.csv --input_shape 256 256 3 --batch_size 1 --num_classes 3 --epochs 100
 ```
 
-####  4. Accuracy
-Calculates the accuracy using two metrics such as Iou and F-Scores.
+#####  4. Accuracy
+* Calculates the accuracy using different accuracy metrics.
 ```commandline
 usage: accuracy.py [-h] [--model MODEL]
                    [--input_shape INPUT_SHAPE [INPUT_SHAPE ...]]
                    [--weights WEIGHTS] [--csv_paths CSV_PATHS]
-                   [--onehot ONEHOT]
+                   [--num_classes NUM_CLASSES]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --model MODEL         Name of the model (from unet, resunet,
-                        segnet)
+  --model MODEL         Name of the model (from unet, resunet, or segnet)
   --input_shape INPUT_SHAPE [INPUT_SHAPE ...]
                         Input shape of the model (rows, columns, channels)
   --weights WEIGHTS     Name and path of the trained model
   --csv_paths CSV_PATHS
                         CSV file with image and label paths
-  --onehot ONEHOT       yes or no, yes if predictions are onehot
+  --num_classes NUM_CLASSES
+                        Number of classes
 
 Example:
 python accuracy.py --model unet --input_shape 256 256 3 --weights ..\\trained_models\\unet300_06_07_20.hdf5 --csv_paths ..\\paths\\data_rd.csv --num_classes 3
 ```
 
-####  5. Prediction
-Predicthe the entire image/tile using trained model. the image/tile paths can create with `CSV Paths` tool.
+#####  5. Prediction
+* Predicts the the entire image/tile with trained model.
 ```commandline
-usage: tile_predict2.py [-h] [--model MODEL]
-                        [--input_shape INPUT_SHAPE [INPUT_SHAPE ...]]
-                        [--weights WEIGHTS] [--csv_paths CSV_PATHS]
-                        [--patch_size PATCH_SIZE] [--tile_size TILE_SIZE]
-                        [--output_folder OUTPUT_FOLDER]
+usage: tile_predict.py [-h] [--model MODEL]
+                       [--input_shape INPUT_SHAPE [INPUT_SHAPE ...]]
+                       [--weights WEIGHTS] [--image_folder IMAGE_FOLDER]
+                       [--image_format IMAGE_FORMAT]
+                       [--output_folder OUTPUT_FOLDER]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -147,12 +150,10 @@ optional arguments:
   --input_shape INPUT_SHAPE [INPUT_SHAPE ...]
                         Input shape of the model (rows, columns, channels)
   --weights WEIGHTS     Name and path of the trained model
-  --csv_paths CSV_PATHS
-                        CSV file with image and label paths
-  --patch_size PATCH_SIZE
-                        Patch size
-  --tile_size TILE_SIZE
-                        Images size expected (Tile should be in square size
+  --image_folder IMAGE_FOLDER
+                        Folder of image or images
+  --image_format IMAGE_FORMAT
+                        Image format
   --output_folder OUTPUT_FOLDER
                         Output path of the predicted images
 
@@ -160,23 +161,24 @@ Example:
 python tile_predict.py --model unet --input_shape 256 256 3 --weights ..\\trained_models\\unet300_06_07_20.hdf5 --image_folder ..\\data\\mass_sample\\test\\image\\ --image_format tiff --output_folder ..\\data\\
 ```
 
-#### 6. Summary of the Model
-shows the summary of the models
+##### 6. Summary of the Model
+* Summary of FCNs
 ```commandline
 usage: summary.py [-h] [--model MODEL]
                   [--input_shape INPUT_SHAPE [INPUT_SHAPE ...]]
+                  [--num_classes NUM_CLASSES]
 
 optional arguments:
   -h, --help            show this help message and exit
   --model MODEL         Model name, should be from unet, resunet, segnet
   --input_shape INPUT_SHAPE [INPUT_SHAPE ...]
                         Input shape of the model (rows, columns, channels)
-
-Example:
-python summary.py --model unet --input_shape 256 256 3
+  --num_classes NUM_CLASSES
+                        Number of classes in label data
 ```
 
-####  7. Rasterize
+#####  7. Rasterize
+* Creating labels wiht shapefiles
 ```commandline
 usage: rasterize.py [-h] [--raster RASTER] [--vector VECTOR] [--buffer BUFFER]
                     [--output_file OUTPUT_FILE] [--attribute ATTRIBUTE]
@@ -189,7 +191,7 @@ optional arguments:
   --output_file OUTPUT_FILE
                         Output image name with directory
   --attribute ATTRIBUTE
-                        Attribute from the vector file (If you want multiply buffer with any attribute in shapefile)
+                        Attribute from the vector file
 Example:
 python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --vector ..\\data\\spacenet\\vector\\spacenet_chip0.shp --buffer 3 --output_file ..\\data\\spacenet\\binary\\test.tif
 ```
@@ -197,10 +199,9 @@ python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --ve
 #### Sample Outputs
 <p align="center">
   <img width="900" height="1300"  src="/data/mass_sota.png">
-  </p>
-  <p align="center">
   <img width="900" height="330"  src="/data/label-pixels_0001.png">
-  </p>
+</p>
+
 ### Benchmark datasets
 1. Massachusetts Benchmark datasets for Road and Building extraction <br/>
 [https://academictorrents.com/browse.php?search=Volodymyr+Mnih](https://academictorrents.com/browse.php?search=Volodymyr+Mnih)
