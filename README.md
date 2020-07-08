@@ -21,7 +21,7 @@ conda install -c anaconda scikit-learn
 #### Usage
 
 <p align="center">
-  <img width="900" height="130"  src="/data/methods.png">
+  <img width="900" height="180"  src="/data/methods.png">
 </p>
 
 #####  1. Patch Generation
