@@ -23,8 +23,6 @@ def rasterize(args):
     # file_name, ext = os.path.splitext(base)
     # print('Rasterizing:  ' + file_name)
     # test = ogr.Open(vector, 0)
-    # lyrTest = test.GetLayer()
-    # v_proj = lyrTest.GetSpatialRef()
 
     # check units
     ds = vector_layer.GetLayer().GetSpatialRef()
