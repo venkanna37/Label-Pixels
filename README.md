@@ -24,7 +24,7 @@ conda install -c anaconda scikit-learn
   <img width="900" height="180"  src="/data/methods.png">
 </p>
 
-#####  1. Patch Generation
+####  1. Patch Generation
 * Generate patches from Images/Tiles
 * To generate patches for train, test and valid sets, the command needs to be run three times
 * Name of image and label files should be same
@@ -57,8 +57,8 @@ Example:
 python patch_gen.py --image_folder ..\\data\\mass_sample\\test\\image\\ --image_format tiff --label_folder ..\\data\\mass_sample\\test\\roads_and_buildings\\ --label_format tif --patch_size 256 --output_folder ..\\data\\mass_patches\\
 ```
 
-##### 2. CSV Paths
-* Saves location of images and labels in CSV file instead of reading patches from folders directly
+#### 2. CSV Paths
+* Save paths of images and labels in CSV file instead of reading patches from folders directly
 ```commandline
 usage: csv_paths.py [-h] [--image_folder IMAGE_FOLDER]
                     [--image_format IMAGE_FORMAT]
@@ -82,7 +82,7 @@ Example:
 python csv_paths.py --image_folder ..\\data\\mass_patches\\image\\ --image_format tif --label_folder ..\\data\\mass_patches\\label\\ --label_format tif --output_csv ..\\paths\\data_rd.csv
 ```
 
-#####  3. Training
+####  3. Training
 * Training FCNs for semantic segmentation
 ```commandline
 usage: train.py [-h] [--model MODEL] [--train_csv TRAIN_CSV]
@@ -111,7 +111,7 @@ Example:
 python train.py --model unet --train_csv ..\\paths\\data_rd.csv --valid_csv ..\\paths\\data_rd.csv --input_shape 256 256 3 --batch_size 1 --num_classes 3 --epochs 100
 ```
 
-#####  4. Accuracy
+####  4. Accuracy
 * Calculates the accuracy using different accuracy metrics.
 ```commandline
 usage: accuracy.py [-h] [--model MODEL]
@@ -134,7 +134,7 @@ Example:
 python accuracy.py --model unet --input_shape 256 256 3 --weights ..\\trained_models\\unet300_06_07_20.hdf5 --csv_paths ..\\paths\\data_rd.csv --num_classes 3
 ```
 
-#####  5. Prediction
+####  5. Prediction
 * Predicts the the entire image/tile with trained model.
 ```commandline
 usage: tile_predict.py [-h] [--model MODEL]
@@ -161,7 +161,7 @@ Example:
 python tile_predict.py --model unet --input_shape 256 256 3 --weights ..\\trained_models\\unet300_06_07_20.hdf5 --image_folder ..\\data\\mass_sample\\test\\image\\ --image_format tiff --output_folder ..\\data\\
 ```
 
-##### 6. Summary of the Model
+#### 6. Summary of the Model
 * Summary of FCNs
 ```commandline
 usage: summary.py [-h] [--model MODEL]
@@ -177,8 +177,8 @@ optional arguments:
                         Number of classes in label data
 ```
 
-#####  7. Rasterize
-* Creating labels wiht shapefiles
+####  7. Rasterize
+* Creating labels with shapefiles
 ```commandline
 usage: rasterize.py [-h] [--raster RASTER] [--vector VECTOR] [--buffer BUFFER]
                     [--output_file OUTPUT_FILE] [--attribute ATTRIBUTE]
@@ -202,7 +202,7 @@ python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --ve
   <img width="900" height="330"  src="/data/label-pixels_0001.png">
 </p>
 
-### Benchmark datasets
+#### Benchmark datasets
 1. Massachusetts Benchmark datasets for Roads and Buildings extraction <br/>
 [https://academictorrents.com/browse.php?search=Volodymyr+Mnih](https://academictorrents.com/browse.php?search=Volodymyr+Mnih)
 2. List of Benchmark datasets for semantic segmentation, object detection from remote sensing imagery
