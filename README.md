@@ -25,7 +25,7 @@ conda install -c anaconda scikit-learn
 </p>
 
 ####  1. Rasterize
-* Creating labels with shapefiles
+* Creates labels with shapefiles
 * The projection of imagery and shapefiles should be same
 * Projection units should be in meters if you want to use buffer
 
@@ -43,159 +43,100 @@ conda install -c anaconda scikit-learn
 
 python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif --vector ../data/spacenet/vector/spacenet_chip0.shp --buffer 2 --buffer_atr lanes --output_file ../data/spacenet/binary/test.tif
 
-####  1. Patch Generation
+####  2. Patch Generation
 * Generate patches from Images/Tiles
 * To generate patches for train, test and valid sets, the command needs to be run three times
 * Name of image and label files should be same
-* Patches would be created to use data generators in KERAS and reduce the memory consumption
 
-```commandline
-usage: patch_gen.py [-h] [--image_folder IMAGE_FOLDER]
-                    [--image_format IMAGE_FORMAT]
-                    [--label_folder LABEL_FOLDER]
-                    [--label_format LABEL_FORMAT] [--patch_size PATCH_SIZE]
-                    [--overlap OVERLAP] [--output_folder OUTPUT_FOLDER]
+| options | Description |
+----------|--------------
+--image_folder | Folder of input images/tiles with directory
+--image_format | Image format tiff/tif/jpg/png
+--label_folder | Folder of label images with directory
+--label_format | Label format tiff/tif/jpg/png
+--patch_size | Patch size to feed network. Default size is 256
+--overlap | Overlap between two patches on image/tile
+--output_folder | Output folder to save patches
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --image_folder IMAGE_FOLDER
-                        Folder of input images
-  --image_format IMAGE_FORMAT
-                        Image format
-  --label_folder LABEL_FOLDER
-                        Folder of corresponding labels
-  --label_format LABEL_FORMAT
-                        Label format
-  --patch_size PATCH_SIZE
-                        Patch size to split the tiles/images
-  --overlap OVERLAP     Overlap between two patches
-  --output_folder OUTPUT_FOLDER
-                        Output folder to save images and labels
+<b> Example: </b>
 
-Example:
-python patch_gen.py --image_folder ..\\data\\mass_sample\\test\\image\\ --image_format tiff --label_folder ..\\data\\mass_sample\\test\\roads_and_buildings\\ --label_format tif --patch_size 256 --output_folder ..\\data\\mass_patches\\
-```
+python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_format tiff --label_folder ../data/mass_sample/test/roads_and_buildings/ --label_format tif --patch_size 256 --output_folder ../data/mass_patches/
 
-#### 2. CSV Paths
-* Save paths of images and labels in CSV file instead of reading patches from folders directly
-```commandline
-usage: csv_paths.py [-h] [--image_folder IMAGE_FOLDER]
-                    [--image_format IMAGE_FORMAT]
-                    [--label_folder LABEL_FOLDER]
-                    [--label_format LABEL_FORMAT] [--output_csv OUTPUT_CSV]
+#### 3. CSV Paths
+* Save directories of patches in CSV file instead of reading patches from folders directly
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --image_folder IMAGE_FOLDER
-                        Image folder
-  --image_format IMAGE_FORMAT
-                        Image format
-  --label_folder LABEL_FOLDER
-                        Label folder
-  --label_format LABEL_FORMAT
-                        Label format
-  --output_csv OUTPUT_CSV
-                        CSV file name with directory
+| options | Description |
+----------|--------------
+--image_folder | Folder of image patches with directory
+--image_format | Image format tif (patch_gen.py save patches in tif format)
+--label_folder | Folder of label patches with directory
+--label_format | Label format tif (patch_gen.py save patches in tif format)
+--patch_size | Patch size to feed network. Default size is 256
+--output_csv | csv filename with directory
 
-Example:
-python csv_paths.py --image_folder ..\\data\\mass_patches\\image\\ --image_format tif --label_folder ..\\data\\mass_patches\\label\\ --label_format tif --output_csv ..\\paths\\data_rd.csv
-```
+<b> Example </b>
 
-####  3. Training
+python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format tif --label_folder ../data/mass_patches/label/ --label_format tif --output_csv ../paths/data_rd.csv
+
+
+####  4. Training
 * Training FCNs for semantic segmentation
-```commandline
-usage: train.py [-h] [--model MODEL] [--train_csv TRAIN_CSV]
-                [--valid_csv VALID_CSV]
-                [--input_shape INPUT_SHAPE [INPUT_SHAPE ...]]
-                [--batch_size BATCH_SIZE] [--num_classes NUM_CLASSES]
-                [--epochs EPOCHS]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --model MODEL         Model name (from unet, resunet, segnet)
-  --train_csv TRAIN_CSV
-                        CSV file with image and label paths from training data
-  --valid_csv VALID_CSV
-                        CSV file with image and label paths from validation
-                        data
-  --input_shape INPUT_SHAPE [INPUT_SHAPE ...]
-                        Input shape of the model (rows, columns, channels)
-  --batch_size BATCH_SIZE
-                        Batch size
-  --num_classes NUM_CLASSES
-                        Number of classes
-  --epochs EPOCHS       Number of epochs
+| options | Description |
+----------|--------------
+--model | Name of FCN model. Existing models are unet, segnet and resunet
+--train_csv | CSV file name with directory, consists of directories of image and label patches of training set.
+--valid_csv | CSV file name with directory, consists of directories of image and label patches of validation set.
+--input_shape | Input shape of model to feed (patch_size patch_size channels)
+--batch_size | Batch size, depends on GPU/CPU memory
+--num_classes | Number of classes in labels data
+--epochs | Number of epochs
 
-Example:
-python train.py --model unet --train_csv ..\\paths\\data_rd.csv --valid_csv ..\\paths\\data_rd.csv --input_shape 256 256 3 --batch_size 1 --num_classes 3 --epochs 100
-```
+<b> Example </b>
 
-####  4. Accuracy
+python train.py --model unet --train_csv ../paths/data_rd.csv --valid_csv ../paths/data_rd.csv --input_shape 256 256 3 --batch_size 1 --num_classes 3 --epochs 100
+
+####  5. Accuracy
 * Calculates the accuracy using different accuracy metrics.
-```commandline
-usage: accuracy.py [-h] [--model MODEL]
-                   [--input_shape INPUT_SHAPE [INPUT_SHAPE ...]]
-                   [--weights WEIGHTS] [--csv_paths CSV_PATHS]
-                   [--num_classes NUM_CLASSES]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --model MODEL         Name of the model (from unet, resunet, or segnet)
-  --input_shape INPUT_SHAPE [INPUT_SHAPE ...]
-                        Input shape of the model (rows, columns, channels)
-  --weights WEIGHTS     Name and path of the trained model
-  --csv_paths CSV_PATHS
-                        CSV file with image and label paths
-  --num_classes NUM_CLASSES
-                        Number of classes
+| options | Description |
+----------|--------------
+--input_shape | Input shape of model (patch_size patch_size channels)
+--weights | Trained model with directory
+--csv_paths | CSV file name with directory, consists of directories of image and label patches of test set.
+--num_classes | Number of classes in labels data
 
-Example:
-python accuracy.py --model unet --input_shape 256 256 3 --weights ..\\trained_models\\unet300_06_07_20.hdf5 --csv_paths ..\\paths\\data_rd.csv --num_classes 3
-```
+<b> Example </b>
 
-####  5. Prediction
+python accuracy.py --model unet --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5 --csv_paths ../paths/data_rd.csv --num_classes 3
+
+####  6. Prediction
 * Predicts the the entire image/tile with trained model.
-```commandline
-usage: tile_predict.py [-h] [--model MODEL]
-                       [--input_shape INPUT_SHAPE [INPUT_SHAPE ...]]
-                       [--weights WEIGHTS] [--image_folder IMAGE_FOLDER]
-                       [--image_format IMAGE_FORMAT]
-                       [--output_folder OUTPUT_FOLDER]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --model MODEL         Name of the model, should be from unet, resunet,
-                        segnet
-  --input_shape INPUT_SHAPE [INPUT_SHAPE ...]
-                        Input shape of the model (rows, columns, channels)
-  --weights WEIGHTS     Name and path of the trained model
-  --image_folder IMAGE_FOLDER
-                        Folder of image or images
-  --image_format IMAGE_FORMAT
-                        Image format
-  --output_folder OUTPUT_FOLDER
-                        Output path of the predicted images
+| options | Description |
+----------|--------------
+--input_shape | Input shape of model (patch_size patch_size channels)
+--weights | Trained model with directory
+--image_folder | Folder of input images/tiles with directory
+--image_format | Image format tiff/tif/jpg/png
+--output_folder | Output folder to save predicted images/tiles
 
-Example:
-python tile_predict.py --model unet --input_shape 256 256 3 --weights ..\\trained_models\\unet300_06_07_20.hdf5 --image_folder ..\\data\\mass_sample\\test\\image\\ --image_format tiff --output_folder ..\\data\\
-```
+<b> Example: </b>
 
-#### 6. Summary of the Model
+python tile_predict.py --model unet --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5 --image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/
+
+#### 7. Summary of the Model
 * Summary of FCNs
-```commandline
-usage: summary.py [-h] [--model MODEL]
-                  [--input_shape INPUT_SHAPE [INPUT_SHAPE ...]]
-                  [--num_classes NUM_CLASSES]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --model MODEL         Model name, should be from unet, resunet, segnet
-  --input_shape INPUT_SHAPE [INPUT_SHAPE ...]
-                        Input shape of the model (rows, columns, channels)
-  --num_classes NUM_CLASSES
-                        Number of classes in label data
-```
+| options | Description |
+----------|--------------
+--model | Name of FCN model. Existing models are unet, segnet and resunet
+--input_shape | Input shape of model to feed (patch_size patch_size channels)
+--num_classes | Number of classes to train
 
+<b> Example </b>
+
+python summary.py --model unet --input_shape 256 256 3 --num_classes 3
 
 #### Segmentation Outputs
 <p align="center">
