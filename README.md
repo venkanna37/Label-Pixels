@@ -36,12 +36,13 @@ conda install -c anaconda scikit-learn
 --vector| Vector file name with directory
 --output_file| Output filename with directory
 --buffer| Buffer length for line feature. Not required for polygon
---buffer_atr| Attribute from the vector file, this attribute can be buffer width and It multiplies with buffer. Not required for polygon
+--buffer_atr| Attribute from the vector file, this attribute can be buffer width and It multiplies with --buffer. Not required for polygon
 --labels_atr| Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value. Not required for line
 
-Example:
+<b>Example:</b>
 
-python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --vector ..\\data\\spacenet\\vector\\spacenet_chip0.shp --buffer_atr lanes --output_file ..\\data\\spacenet\\binary\\test.tif
+python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif --vector ../data/spacenet/vector/spacenet_chip0.shp --buffer 2 --buffer_atr lanes --output_file ../data/spacenet/binary/test.tif
+
 ####  1. Patch Generation
 * Generate patches from Images/Tiles
 * To generate patches for train, test and valid sets, the command needs to be run three times
