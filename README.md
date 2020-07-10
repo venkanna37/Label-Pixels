@@ -1,14 +1,14 @@
-##  Label-Pixels
+<h1 align='center'>Label-Pixels</h1>
 Label-Pixels is a tool for semantic segmentation of remote sensing images using fully convolutional networks (FCNs), designed for extracting the road network from remote sensing imagery and it can be
  used in other applications applications to label every pixel in the image ( Semantic segmentation).
   This is part of my MSc research project (Automatic Road Extraction from High-Resolution Remote Sensing Imagery
   using Fully Convolutional Networks and Transfer Learning).
 
-####  Clone repository
+
+## Clone repository and Install packages in Anaconda
 ```commandline
 git clone https://github.com/venkanna37/Label-Pixels.git
 ```
-#### Install packages in Anaconda
 ```commandline
 conda env create -f environment.yml
 ```
@@ -18,13 +18,13 @@ conda install -c conda-forge keras
 conda install -c conda-forge gdal
 conda install -c anaconda scikit-learn
 ```
-#### Usage
+## Usage
 
 <p align="center">
   <img width="900" height="180"  src="/data/methodology.png">
 </p>
 
-####  1. Rasterize
+##  1. Rasterize
 * Creates labels with shapefiles
 * The projection of imagery and shapefiles should be same
 * Projection units should be in meters if you want to use buffer
@@ -43,7 +43,7 @@ conda install -c anaconda scikit-learn
 
 python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif --vector ../data/spacenet/vector/spacenet_chip0.shp --buffer 2 --buffer_atr lanes --output_file ../data/spacenet/binary/test.tif
 
-####  2. Patch Generation
+##  2. Patch Generation
 * Generate patches from Images/Tiles
 * To generate patches for train, test and valid sets, the command needs to be run three times
 * Name of image and label files should be same
@@ -62,7 +62,7 @@ python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif --vector
 
 python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_format tiff --label_folder ../data/mass_sample/test/roads_and_buildings/ --label_format tif --patch_size 256 --output_folder ../data/mass_patches/
 
-#### 3. CSV Paths
+## 3. CSV Paths
 * Save directories of patches in CSV file instead of reading patches from folders directly
 
 | options | Description |
@@ -79,7 +79,7 @@ python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_forma
 python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format tif --label_folder ../data/mass_patches/label/ --label_format tif --output_csv ../paths/data_rd.csv
 
 
-####  4. Training
+##  4. Training
 * Training FCNs for semantic segmentation
 
 | options | Description |
@@ -96,7 +96,7 @@ python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format ti
 
 python train.py --model unet --train_csv ../paths/data_rd.csv --valid_csv ../paths/data_rd.csv --input_shape 256 256 3 --batch_size 1 --num_classes 3 --epochs 100
 
-####  5. Accuracy
+##  5. Accuracy
 * Calculates the accuracy using different accuracy metrics.
 
 | options | Description |
@@ -110,7 +110,7 @@ python train.py --model unet --train_csv ../paths/data_rd.csv --valid_csv ../pat
 
 python accuracy.py --model unet --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5 --csv_paths ../paths/data_rd.csv --num_classes 3
 
-####  6. Prediction
+##  6. Prediction
 * Predicts the the entire image/tile with trained model.
 
 | options | Description |
@@ -125,7 +125,7 @@ python accuracy.py --model unet --input_shape 256 256 3 --weights ../trained_mod
 
 python tile_predict.py --model unet --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5 --image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/
 
-#### 7. Summary of the Model
+## 7. Summary of the Model
 * Summary of FCNs
 
 | options | Description |
@@ -138,17 +138,17 @@ python tile_predict.py --model unet --input_shape 256 256 3 --weights ../trained
 
 python summary.py --model unet --input_shape 256 256 3 --num_classes 3
 
-#### Segmentation Outputs
+## Example Outputs
 <p align="center">
   <img width="900" height="1300"  src="/data/mass_sota.png">
   <img width="900" height="330"  src="/data/mass_roads_and_buildings.png">
 </p>
 
-#### Benchmark datasets
+## Benchmark datasets
 1. Massachusetts Benchmark datasets for Roads and Buildings extraction <br/>
 [https://academictorrents.com/browse.php?search=Volodymyr+Mnih](https://academictorrents.com/browse.php?search=Volodymyr+Mnih)
 2. List of Benchmark datasets for semantic segmentation, object detection from remote sensing imagery
 [https://github.com/chrieke/awesome-satellite-imagery-datasets](https://github.com/chrieke/awesome-satellite-imagery-datasets)
 
-#### Any problem with code?
+### Any problem with code?
 Open [issue](https://github.com/venkanna37/Label-Pixels/issues) or mail me :point_right:  g.venkanna37@gmail.com
