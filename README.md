@@ -24,6 +24,24 @@ conda install -c anaconda scikit-learn
   <img width="900" height="180"  src="/data/methodology.png">
 </p>
 
+####  1. Rasterize
+* Creating labels with shapefiles
+* The projection of imagery and shapefiles should be same
+* Projection units should be in meters if you want to use buffer
+
+| options | Description |
+----------|--------------
+--help| Print usage information
+--raster| Raster/Image name with directory
+--vector| Vector file name with directory
+--output_file| Output filename with directory
+--buffer| Buffer length for line feature. Not required for polygon
+--buffer_atr| Attribute from the vector file, this attribute can be buffer width and It multiplies with buffer. Not required for polygon
+--labels_atr| Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value. Not required for line
+
+Example:
+
+python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --vector ..\\data\\spacenet\\vector\\spacenet_chip0.shp --buffer_atr lanes --output_file ..\\data\\spacenet\\binary\\test.tif
 ####  1. Patch Generation
 * Generate patches from Images/Tiles
 * To generate patches for train, test and valid sets, the command needs to be run three times
@@ -177,24 +195,6 @@ optional arguments:
                         Number of classes in label data
 ```
 
-####  7. Rasterize
-* Creating labels with shapefiles
-```commandline
-usage: rasterize.py [-h] [--raster RASTER] [--vector VECTOR] [--buffer BUFFER]
-                    [--output_file OUTPUT_FILE] [--attribute ATTRIBUTE]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --raster RASTER       Raster file name with directory
-  --vector VECTOR       Vector file name with directory
-  --buffer BUFFER       Buffer width of line feature
-  --output_file OUTPUT_FILE
-                        Output image name with directory
-  --attribute ATTRIBUTE
-                        Attribute from the vector file
-Example:
-python rasterize.py --raster ..\\data\\spacenet\\raster\\spacenet_chip0.tif --vector ..\\data\\spacenet\\vector\\spacenet_chip0.shp --buffer 3 --output_file ..\\data\\spacenet\\binary\\test.tif
-```
 
 #### Segmentation Outputs
 <p align="center">
