@@ -37,7 +37,7 @@ conda install -c anaconda scikit-learn
 --output_file| Output filename with directory
 --buffer| Buffer length for line feature. Not required for polygon
 --buffer_atr| Attribute from the vector file, this attribute can be buffer width and It multiplies with --buffer. Not required for polygon
---labels_atr| Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value. Not required for line
+--labels_atr| Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value. Not required for line and single class (Polygon)
 
 <b>Example:</b>
 

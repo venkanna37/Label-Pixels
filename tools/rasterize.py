@@ -27,7 +27,7 @@ def rasterize(args):
     gt = ref_image.GetGeoTransform()
     proj = ref_image.GetProjection()
     [cols, rows] = np.array(ref_image.GetRasterBand(1).ReadAsArray()).shape
-    target_ds = gdal.GetDriverByName('GTiff').Create(output_file, cols, rows, 1, gdal.GDT_Byte)
+    target_ds = gdal.GetDriverByName('GTiff').Create(output_file, rows, cols, 1, gdal.GDT_Byte)
     target_ds.SetGeoTransform(gt)
     target_ds.SetProjection(proj)
     target_ds.GetRasterBand(1)
@@ -80,10 +80,15 @@ def rasterize(args):
 
     elif geom.GetGeometryType() == ogr.wkbPolygon:
         lyrBuffer = v_layer
-        label_atr = ["ATTRIBUTE=" + args.label_atr]
-        # gdal.RasterizeLayer(ds,bands,layer,burn_values, options = ["BURN_VALUE_FROM=Z"])
-        gdal.RasterizeLayer(target_ds, [1], lyrBuffer, options=label_atr)
-        target_ds = None
+        if args.label_atr:
+            label_atr = ["ATTRIBUTE=" + args.label_atr]
+            # gdal.RasterizeLayer(ds,bands,layer,burn_values, options = ["BURN_VALUE_FROM=Z"])
+            gdal.RasterizeLayer(target_ds, [1], lyrBuffer, options=label_atr)
+            target_ds = None
+        else:
+            gdal.RasterizeLayer(target_ds, [1], lyrBuffer)
+            target_ds = None
+
     else:
         print("The Geometry type is neither Polygon nor Line")
 
@@ -96,6 +101,7 @@ if __name__ == '__main__':
     parser.add_argument("--output_file", type=str, help="Output image name with directory")
     parser.add_argument("--buffer_atr", type=str, help="Attribute from the vector file, This attribute can be"
                                                        " buffer Width or It multiplies with buffer", default=None)
-    parser.add_argument("--label_atr", type=str, help="Attribute from the vector file to assign label to pixel")
+    parser.add_argument("--label_atr", type=str, help="Attribute from the vector file to assign label to pixel."
+                                                      "Not required for single class")
     args = parser.parse_args()
     rasterize(args)
