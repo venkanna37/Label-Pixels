@@ -46,10 +46,10 @@ def train(args):
     train_steps = len(image_paths) // args.batch_size
     valid_steps = len(valid_image_paths) // args.batch_size
     model_name = args.model
-    model_file = model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".hdf5"
-    log_file = model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".csv"
+    model_file = "../trained_models/" + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".hdf5"
+    log_file = "../trained_models/" + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") + ".csv"
     # Training the model
-    model_checkpoint = ModelCheckpoint(model_file, monitor='val_acc', verbose=1, save_best_only=True)
+    model_checkpoint = ModelCheckpoint(model_file, monitor='val_loss', verbose=1, save_best_only=True)
     csv_logger = CSVLogger(log_file, separator=',', append=False)
     model.fit_generator(train_gen, validation_data=valid_gen, steps_per_epoch=train_steps, validation_steps=valid_steps,
                         epochs=args.epochs, callbacks=[model_checkpoint, csv_logger])
