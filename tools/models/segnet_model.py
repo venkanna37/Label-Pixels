@@ -1,8 +1,11 @@
-from typing import Tuple, List, Text, Dict, Any, Iterator
+"""
+SegNet Model
+ - refer: https://arxiv.org/abs/1511.00561
+"""
 
+from typing import Tuple, List, Text, Dict, Any, Iterator
 import numpy as np
 import h5py
-
 from keras.engine.training import Model as tModel
 from keras.applications.vgg16 import VGG16
 from keras.models import Model

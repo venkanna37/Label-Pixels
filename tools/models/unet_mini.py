@@ -1,3 +1,9 @@
+"""
+UNet model with less convolutional layers
+ - Layers in origin UNet are [64, 128, 256, 512, 1024]
+ - Layers in this network (unet_mini) reduced to [16, 32, 64, 128, 256]
+"""
+
 import keras
 import argparse
 
@@ -8,6 +14,7 @@ def down_block(x, filters, kernel_size=(3, 3), padding="same", strides=1):
     c = keras.layers.Conv2D(filters, kernel_size, padding=padding, strides=strides, activation="relu")(c)
     p = keras.layers.MaxPool2D((2, 2), (2, 2))(c)
     return c, p
+
 
 # Passing arguments for commands line
 def add__parser(subparser):
@@ -28,10 +35,6 @@ def bottleneck(x, filters, kernel_size=(3, 3), padding="same", strides=1):
     c = keras.layers.Conv2D(filters, kernel_size, padding=padding, strides=strides, activation="relu")(x)
     c = keras.layers.Conv2D(filters, kernel_size, padding=padding, strides=strides, activation="relu")(c)
     return c
-
-
-# UNet model
-# image_shape = 128
 
 
 def UNet(args):

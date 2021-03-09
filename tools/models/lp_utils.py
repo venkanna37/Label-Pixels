@@ -4,7 +4,7 @@ List of functions used in tools
 
 import csv
 import sys
-from tensorflow.keras.models import load_model
+# from tensorflow.keras.models import load_model
 from models import resunet_model, unet_model, segnet_model, unet_mini
 
 
@@ -12,19 +12,23 @@ from models import resunet_model, unet_model, segnet_model, unet_mini
 def select_model(args):
     if args.model == "unet":
         model = unet_model.unet(args)
-        model.load_weights(args.weights)
+        if args.weights:
+            model.load_weights(args.weights)
         return model
     elif args.model == "resunet":
         model = resunet_model.build_res_unet(args)
-        model.load_weights(args.weights)
+        if args.weights:
+            model.load_weights(args.weights)
         return model
     elif args.model == "segnet":
         model = segnet_model.create_segnet(args)
-        model.load_weights(args.weights)
+        if args.weights:
+            model.load_weights(args.weights)
         return model
     elif args.model == "unet_mini":
         model = unet_mini.UNet(args)
-        model.load_weights(args.weights)
+        if args.weights:
+            model.load_weights(args.weights)
         return model
     else:
         print(args.model + "Model does not exist, select model from"
