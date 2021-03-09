@@ -1,8 +1,8 @@
 """
 predicts every patch and save as tif file
-Working well for multi-class  classification (softmax loss function)
+Working well for multi-class  classification (softmax)
   - Tested with unet_mini model
-working well for binary classification (sigmoid loss function)
+working well for binary classification (sigmoid)
   - Tested with resunet model
 """
 

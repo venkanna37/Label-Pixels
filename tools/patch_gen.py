@@ -1,3 +1,9 @@
+"""
+Creatig patches from image/list of images
+:keyword
+patch: size of an image that feed to deep learning models
+"""
+
 import gdal
 import glob
 import numpy as np

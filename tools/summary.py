@@ -4,7 +4,7 @@ from models import unet_model, resunet_model, segnet_model
 
 def summary(args):
     if args.model == "unet":
-        model = unet_model.UNet(args)
+        model = unet_model.unet(args)
         model.summary()
     elif args.model == "resunet":
         model = resunet_model.build_res_unet(args)
