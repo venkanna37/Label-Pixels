@@ -57,12 +57,15 @@ class DataGenerator(keras.utils.Sequence):
             _label = gdal.Open(label)
             _image = np.array(_image.ReadAsArray()) / rescale_value
             _image = _image.transpose(1, 2, 0)
-            _label = np.array(_label.ReadAsArray()) / rescale_value
+            _label = np.array(_label.ReadAsArray())
             _label = np.expand_dims(_label, axis=-1)
+            # print(_label.shape)
             if n_classes > 1:
                 _label = to_categorical(_label, num_classes=n_classes)
+                # print(_label.shape)
             X.append(_image)
             y.append(_label)
         X = np.array(X)
         y = np.array(y)
+        # print(X.shape, y.shape)
         return X, y
