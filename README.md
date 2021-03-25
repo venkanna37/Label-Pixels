@@ -1,23 +1,28 @@
 <h1 align='center'>Label-Pixels</h1>
-Label-Pixels is a tool for semantic segmentation of remote sensing images using fully convolutional networks (FCNs), designed for extracting the road network from remote sensing imagery and it can be
+Label-Pixels is a tool for semantic segmentation of remote sensing images using fully convolutional networks (FCNs),
+designed for extracting the road network from remote sensing imagery and it can be
  used in other applications applications to label every pixel in the image ( Semantic segmentation).
   This is part of my MSc research project (Automatic Road Extraction from High-Resolution Remote Sensing Imagery
   using Fully Convolutional Networks and Transfer Learning).
 
+### Tested on (recently)
+```
+python 3.6.13
+Keras 2.3.1
+Tensorflow 2.1.0
+gdal 2.2.2
+scikit-learn 0.23.2
+```
 
-## Clone repository and install packages in Anaconda
+### Clone repository
 ```commandline
 git clone https://github.com/venkanna37/Label-Pixels.git
 ```
+### Install packages in Anaconda (This is old file [#2](https://github.com/venkanna37/Label-Pixels/issues/2))
 ```commandline
 conda env create -f environment.yml
 ```
-OR
-```commandline
-conda install -c conda-forge keras
-conda install -c conda-forge gdal
-conda install -c anaconda scikit-learn
-```
+OR, Install `Tensorflow 2.1.0, Keras 2.3.1, gdal 2.2.2, scikit-learn 0.23.2`
 ## Usage
 
 <p align="center">
@@ -28,6 +33,8 @@ conda install -c anaconda scikit-learn
 * Creates labels with shapefiles
 * The projection of imagery and shapefiles should be same
 * Projection units should be in meters if you want to buffer line feature
+* `--buffer` not required for polygon
+* `--labels_atr` not required for line and single class (Polygon)
 
 | options | Description |
 ----------|--------------
@@ -36,12 +43,14 @@ conda install -c anaconda scikit-learn
 --vector| Vector file name with directory
 --output_file| Output filename with directory
 --buffer| Buffer length for line feature. Not required for polygon
---buffer_atr| Attribute from the vector file, this attribute can be buffer width and It multiplies with --buffer. Not required for polygon
---labels_atr| Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value. Not required for line and single class (Polygon)
+--buffer_atr| Attribute from the vector file, this attribute can be buffer width and It multiplies with --buffer.
+--labels_atr| Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value. 
 
 <b>Example:</b>
 
-python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif --vector ../data/spacenet/vector/spacenet_chip0.shp --buffer 2 --buffer_atr lanes --output_file ../data/spacenet/binary/test.tif
+python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif
+--vector ../data/spacenet/vector/spacenet_chip0.shp --buffer 2 --buffer_atr lanes
+--output_file ../data/spacenet/binary/test.tif
 
 ##  Patch Generation
 * Generate patches from Images/Tiles
@@ -60,7 +69,8 @@ python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif --vector
 
 <b> Example: </b>
 
-python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_format tiff --label_folder ../data/mass_sample/test/roads_and_buildings/ --label_format tif --patch_size 256 --output_folder ../data/mass_patches/
+python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_format tiff --label_folder
+../data/mass_sample/test/roads_and_buildings/ --label_format tif --patch_size 256 --output_folder ../data/mass_patches/
 
 ## CSV Paths
 * Save directories of patches in CSV file instead of reading patches from folders directly
@@ -76,7 +86,8 @@ python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_forma
 
 <b> Example </b>
 
-python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format tif --label_folder ../data/mass_patches/label/ --label_format tif --output_csv ../paths/data_rd.csv
+python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format tif --label_folder
+../data/mass_patches/label/ --label_format tif --output_csv ../paths/data_rd.csv
 
 
 ##  Training
@@ -84,7 +95,7 @@ python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format ti
 
 | options | Description |
 ----------|--------------
---model | Name of FCN model. Existing models are unet, segnet and resunet
+--model | Name of FCN model. Existing models are unet, unet_mini, segnet and resunet
 --train_csv | CSV file name with directory, consists of directories of image and label patches of training set.
 --valid_csv | CSV file name with directory, consists of directories of image and label patches of validation set.
 --input_shape | Input shape of model to feed (patch_size patch_size channels)
@@ -94,7 +105,8 @@ python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format ti
 
 <b> Example </b>
 
-python train.py --model unet --train_csv ../paths/data_rd.csv --valid_csv ../paths/data_rd.csv --input_shape 256 256 3 --batch_size 1 --num_classes 3 --epochs 100
+python train.py --model unet_mini --train_csv ../paths/data_rd.csv --valid_csv ../paths/data_rd.csv
+--input_shape 256 256 3 --batch_size 1 --num_classes 3 --epochs 100
 
 ##  Accuracy
 * Calculates the accuracy using different accuracy metrics.
@@ -108,7 +120,8 @@ python train.py --model unet --train_csv ../paths/data_rd.csv --valid_csv ../pat
 
 <b> Example </b>
 
-python accuracy.py --model unet --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5 --csv_paths ../paths/data_rd.csv --num_classes 3
+python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5
+--csv_paths ../paths/data_rd.csv --num_classes 3
 
 ##  Prediction
 * Predicts the the entire image/tile with trained model.
@@ -123,14 +136,15 @@ python accuracy.py --model unet --input_shape 256 256 3 --weights ../trained_mod
 
 <b> Example: </b>
 
-python tile_predict.py --model unet --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5 --image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/
+python tile_predict.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5
+--image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/
 
 ## Summary of the Model
 * Summary of FCNs
 
 | options | Description |
 ----------|--------------
---model | Name of FCN model. Existing models are unet, segnet and resunet
+--model | Name of FCN model. Existing models are unet, unet_mini, segnet and resunet
 --input_shape | Input shape of model to feed (patch_size patch_size channels)
 --num_classes | Number of classes to train
 
@@ -146,9 +160,11 @@ python summary.py --model unet --input_shape 256 256 3 --num_classes 3
 
 ## Benchmark datasets
 1. Massachusetts Benchmark datasets for Roads and Buildings extraction <br/>
-[https://academictorrents.com/browse.php?search=Volodymyr+Mnih](https://academictorrents.com/browse.php?search=Volodymyr+Mnih)
+[https://academictorrents.com/browse.php?search=Volodymyr
+   +Mnih](https://academictorrents.com/browse.php?search=Volodymyr+Mnih)
 2. List of Benchmark datasets for semantic segmentation, object detection from remote sensing imagery
-[https://github.com/chrieke/awesome-satellite-imagery-datasets](https://github.com/chrieke/awesome-satellite-imagery-datasets)
+[https://github.com/chrieke/awesome-satellite-imagery
+   -datasets](https://github.com/chrieke/awesome-satellite-imagery-datasets)
 
 ### Any problem with code?
 Open [issue](https://github.com/venkanna37/Label-Pixels/issues) or mail me :point_right:  g.venkanna37@gmail.com
