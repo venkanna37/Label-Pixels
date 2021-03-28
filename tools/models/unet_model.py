@@ -53,9 +53,9 @@ def unet(args):
     conv9 = Conv2D(2, 3, activation='relu', padding='same', kernel_initializer='normal')(conv9)
     # conv10 = Conv2D(1, 1, activation='sigmoid')(conv9)
 
-    if args.num_classes != 1:
+    if args.num_classes > 1:
         conv10 = Conv2D(args.num_classes, (1, 1), padding="same", activation="softmax")(conv9)
-    else:
+    elif args.num_classes == 1:
         conv10 = Conv2D(1, (1, 1), padding="same", activation="sigmoid")(conv9)
     model = Model(inputs=inputs, outputs=conv10)
 

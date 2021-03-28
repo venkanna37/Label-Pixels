@@ -4,7 +4,7 @@ UNet model with less convolutional layers
  - Layers in this network (unet_mini) reduced to [16, 32, 64, 128, 256]
 """
 
-import keras
+import tensorflow.keras as keras
 import argparse
 
 
@@ -55,9 +55,9 @@ def UNet(args):
     u3 = up_block(u2, c2, f[1])  # 32 -> 64
     u4 = up_block(u3, c1, f[0])  # 64 -> 128
 
-    if args.num_classes != 1:
+    if args.num_classes > 1:
         outputs = keras.layers.Conv2D(args.num_classes, (1, 1), padding="same", activation="softmax")(u4)
-    else:
+    elif args.num_classes == 1:
         outputs = keras.layers.Conv2D(1, (1, 1), padding="same", activation="sigmoid")(u4)
     model = keras.models.Model(inputs, outputs)
     return model

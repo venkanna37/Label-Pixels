@@ -57,9 +57,9 @@ def build_res_unet(args):
     to_decoder = encoder(inputs)
     path = res_block(to_decoder[2], [512, 512], [(2, 2), (1, 1)])
     path = decoder(path, from_encoder=to_decoder)
-    if args.num_classes != 1:
+    if args.num_classes > 1:
         path = Conv2D(args.num_classes, kernel_size=(1, 1), activation='softmax')(path)
-    else:
+    elif args.num_classes == 1:
         path = Conv2D(filters=1, kernel_size=(1, 1), activation='sigmoid')(path)
     return Model(input=inputs, output=path)
 

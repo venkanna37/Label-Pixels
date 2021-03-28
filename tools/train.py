@@ -2,6 +2,7 @@
 Training Fully Convolutional Networks
 """
 import argparse
+import tensorflow as tf
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import CSVLogger
 import datetime

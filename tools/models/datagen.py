@@ -2,9 +2,9 @@
 Preparing input data to feed networks
 """
 import numpy as np
-import keras
+import tensorflow.keras as keras
 import gdal
-from keras.utils import to_categorical
+from tensorflow.keras.utils import to_categorical
 
 
 class DataGenerator(keras.utils.Sequence):
