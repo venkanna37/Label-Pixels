@@ -1,11 +1,12 @@
 <h1 align='center'>Label-Pixels</h1>
-Label-Pixels is a tool for semantic segmentation of remote sensing images using fully convolutional networks (FCNs),
-designed for extracting the road network from remote sensing imagery and it can be
- used in other applications applications to label every pixel in the image ( Semantic segmentation).
-  This is part of my MSc research project (Automatic Road Extraction from High-Resolution Remote Sensing Imagery
-  using Fully Convolutional Networks and Transfer Learning).
+Label-Pixels is the tool for semantic segmentation of remote sensing imagery using Fully Convolutional Networks (FCNs).
+Initially, this tool developed for extracting the road network from high-resolution remote sensing imagery. 
+And now, this tool can be used to extract various features (Semantic segmentation of remote sensing imagery). 
+This is part of my MSc research work (Automatic Road Extraction from High-Resolution Remote Sensing Imagery 
+using Fully Convolutional Networks and Transfer Learning), worked under Mr. Ashutosh Kumar Jha 
+(IIRS) and Dr. Claudio Persello (University of Twente, ITC).
 
-### Tested on (recently)
+### Tested on
 ```
 python 3.6.13
 Keras 2.3.1
@@ -13,28 +14,31 @@ Tensorflow 2.1.0
 gdal 2.2.2
 scikit-learn 0.23.2
 ```
-
-### Clone repository
+### Installation
+#### Clone repository
 ```commandline
 git clone https://github.com/venkanna37/Label-Pixels.git
+cd Label-Pixels
 ```
-### Install packages in Anaconda (This is old file [#2](https://github.com/venkanna37/Label-Pixels/issues/2))
+#### Setup environment
+* Create an environment and install above packages OR install with `environment.yml` file in Anaconda
+* Note: `environment.yml` file created with `conda env export > environment.yml` command in Anaconda
 ```commandline
 conda env create -f environment.yml
+conda activate label-pixels
 ```
-OR, Install `Tensorflow 2.1.0, Keras 2.3.1, gdal 2.2.2, scikit-learn 0.23.2`
-## Usage
+### Usage
 
 <p align="center">
   <img width="900" height="370"  src="/data/methodology2.png">
 </p>
 
-##  Rasterize
+###  Rasterize
 * Creates labels with shapefiles
 * The projection of imagery and shapefiles should be same
 * Projection units should be in meters if you want to buffer line feature
 * `--buffer` not required for polygon
-* `--labels_atr` not required for line and single class (Polygon)
+* `--labels_atr` not required for line and single class
 
 | options | Description |
 ----------|--------------
@@ -52,7 +56,7 @@ python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif
 --vector ../data/spacenet/vector/spacenet_chip0.shp --buffer 2 --buffer_atr lanes
 --output_file ../data/spacenet/binary/test.tif
 
-##  Patch Generation
+###  Patch Generation
 * Generate patches from Images/Tiles
 * To generate patches for train, test and valid sets, the command needs to be run three times
 * Name of image and label files should be same
@@ -72,7 +76,7 @@ python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif
 python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_format tiff --label_folder
 ../data/mass_sample/test/roads_and_buildings/ --label_format tif --patch_size 256 --output_folder ../data/mass_patches/
 
-## CSV Paths
+### CSV Paths
 * Save directories of patches in CSV file instead of reading patches from folders directly
 
 | options | Description |
@@ -87,11 +91,14 @@ python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_forma
 <b> Example </b>
 
 python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format tif --label_folder
-../data/mass_patches/label/ --label_format tif --output_csv ../paths/data_rd.csv
+../data/mass_patches/label/ --label_format tif --output_csv ../paths/data_rnb.csv
 
 
-##  Training
+###  Training
 * Training FCNs for semantic segmentation
+* For Binary classification, `--num_classes = 1`
+* For Binary classification with one-hot encoding, `--num_classes = 2`
+* For multi class classification, `--num_classes = number of classes (>1)`
 
 | options | Description |
 ----------|--------------
@@ -105,10 +112,10 @@ python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format ti
 
 <b> Example </b>
 
-python train.py --model unet_mini --train_csv ../paths/data_rd.csv --valid_csv ../paths/data_rd.csv
---input_shape 256 256 3 --batch_size 1 --num_classes 3 --epochs 100
+python train.py --model unet_mini --train_csv ../paths/data_rnb.csv --valid_csv ../paths/data_rnb.csv
+--input_shape 256 256 3 --batch_size 4 --num_classes 3 --epochs 100
 
-##  Accuracy
+###  Accuracy
 * Calculates the accuracy using different accuracy metrics.
 
 | options | Description |
@@ -120,10 +127,10 @@ python train.py --model unet_mini --train_csv ../paths/data_rd.csv --valid_csv .
 
 <b> Example </b>
 
-python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5
---csv_paths ../paths/data_rd.csv --num_classes 3
+python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet_mini300_06_07_20.hdf5
+--csv_paths ../paths/data_rnb.csv --num_classes 3
 
-##  Prediction
+###  Prediction
 * Predicts the the entire image/tile with trained model.
 
 | options | Description |
@@ -139,7 +146,7 @@ python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../traine
 python tile_predict.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5
 --image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/
 
-## Summary of the Model
+### Summary of the Model
 * Summary of FCNs
 
 | options | Description |
@@ -152,13 +159,13 @@ python tile_predict.py --model unet_mini --input_shape 256 256 3 --weights ../tr
 
 python summary.py --model unet --input_shape 256 256 3 --num_classes 3
 
-## Example Outputs
+### Example Outputs
 <p align="center">
   <img width="900" height="1300"  src="/data/mass_sota.png">
   <img width="900" height="330"  src="/data/mass_roads_and_buildings.png">
 </p>
 
-## Benchmark datasets
+### Benchmark datasets
 1. Massachusetts Benchmark datasets for Roads and Buildings extraction <br/>
 [https://academictorrents.com/browse.php?search=Volodymyr
    +Mnih](https://academictorrents.com/browse.php?search=Volodymyr+Mnih)
@@ -166,5 +173,5 @@ python summary.py --model unet --input_shape 256 256 3 --num_classes 3
 [https://github.com/chrieke/awesome-satellite-imagery
    -datasets](https://github.com/chrieke/awesome-satellite-imagery-datasets)
 
-### Any problem with code?
+#### Any problem with code?
 Open [issue](https://github.com/venkanna37/Label-Pixels/issues) or mail me :point_right:  g.venkanna37@gmail.com

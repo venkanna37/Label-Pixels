@@ -1,118 +1,129 @@
-name: keras
+name: label-pixels
 channels:
-  - anaconda
   - conda-forge
+  - zeus1942
+  - anaconda
   - defaults
 dependencies:
-  - absl-py=0.9.0=py36h9f0ad1d_1
-  - astor=0.7.1=py_0
+  - _tflow_select=2.1.0=gpu
+  - absl-py=0.10.0=py36_0
+  - aiohttp=3.6.3=py36he774522_0
+  - astor=0.8.1=py36_0
+  - async-timeout=3.0.1=py36_0
+  - attrs=20.2.0=py_0
   - blas=1.0=mkl
+  - blinker=1.4=py36_0
   - boost-cpp=1.72.0=h0caebb8_0
-  - bzip2=1.0.8=hfa6e2cd_2
-  - ca-certificates=2020.1.1=0
-  - certifi=2020.4.5.1=py36_0
-  - cfitsio=3.470=he774522_5
-  - curl=7.69.1=h1dcc11c_0
-  - expat=2.2.9=he025d50_2
-  - freetype=2.10.2=hd328e21_0
-  - freexl=1.0.5=hd288d7e_1002
-  - gast=0.3.3=py_0
-  - gdal=3.0.4=py36h7bdd3bd_6
-  - geos=3.8.1=he025d50_0
-  - geotiff=1.5.1=h3d29ae3_10
-  - gettext=0.19.8.1=hb01d8f6_1002
-  - git=2.23.0=h6bb4b03_0
-  - git-lfs=2.11.0=0
-  - glib=2.64.2=he4de6d7_1
-  - grpcio=1.23.0=py36hc6b9980_1
-  - h5py=2.10.0=nompi_py36h422b98e_102
-  - hdf4=4.2.13=hf8e6fe8_1003
-  - hdf5=1.10.5=nompi_ha405e13_1104
+  - brotlipy=0.7.0=py36he774522_1000
+  - bzip2=1.0.8=he774522_0
+  - ca-certificates=2020.10.14=0
+  - cachetools=4.1.1=py_0
+  - certifi=2020.6.20=py36_0
+  - cffi=1.14.3=py36h7a1dbc1_0
+  - chardet=3.0.4=py36_1003
+  - click=7.1.2=py_0
+  - cryptography=3.1.1=py36h7a1dbc1_0
+  - cudatoolkit=10.1.243=h74a9793_0
+  - cudnn=7.6.5=cuda10.1_0
+  - curl=7.69.1=h2a8f88b_0
+  - expat=2.2.10=h33f27b4_2
+  - freexl=1.0.6=h2bbff1b_0
+  - gast=0.2.2=py36_0
+  - gdal=2.2.2=py36hcebd033_1
+  - geos=3.6.2=h9ef7328_2
+  - google-auth=1.22.1=py_0
+  - google-auth-oauthlib=0.4.1=py_2
+  - google-pasta=0.2.0=py_0
+  - grpcio=1.31.0=py36he7da953_0
+  - h5py=2.7.1=py36he54a1c3_0
+  - hdf4=4.2.13=h712560f_2
+  - hdf5=1.10.1=vc14hb361328_0
   - icc_rt=2019.0.0=h0cc432a_1
-  - icu=64.2=he025d50_1
-  - importlib-metadata=1.6.0=py36h9f0ad1d_0
-  - intel-openmp=2020.0=166
-  - joblib=0.14.1=py_0
+  - idna=2.10=py_0
+  - idna_ssl=1.1.0=py36_0
+  - importlib-metadata=2.0.0=py_1
+  - intel-openmp=2020.2=254
+  - joblib=0.17.0=py_0
   - jpeg=9c=hfa6e2cd_1001
-  - kealib=1.4.13=hd6dc3df_0
+  - kealib=1.4.7=ha5b336b_5
   - keras=2.3.1=py36h21ff451_0
   - keras-applications=1.0.8=py_1
-  - keras-preprocessing=1.1.0=py_0
-  - krb5=1.17.1=hdd46e55_0
-  - libblas=3.8.0=15_mkl
-  - libcblas=3.8.0=15_mkl
-  - libcurl=7.69.1=h1dcc11c_0
-  - libffi=3.2.1=h6538335_1007
-  - libgdal=3.0.4=h821c9b7_6
-  - libgpuarray=0.7.6=hfa6e2cd_1003
-  - libiconv=1.15=hfa6e2cd_1006
+  - keras-preprocessing=1.1.0=py_1
+  - krb5=1.17.1=hc04afaa_0
+  - libcurl=7.69.1=h2a8f88b_0
+  - libgdal=2.2.2=h2727f2b_1
+  - libgpuarray=0.7.6=h8ffe710_1003
+  - libiconv=1.15=h1df5818_7
   - libkml=1.3.0=h7e985d0_1011
-  - liblapack=3.8.0=15_mkl
-  - libnetcdf=4.7.4=nompi_hc957ea6_101
-  - libpng=1.6.37=hfe6a214_1
+  - libnetcdf=4.4.1.1=h825a56a_8
+  - libpng=1.6.37=h2a8f88b_0
   - libpq=12.2=hd9aa61d_1
-  - libprotobuf=3.11.4=h1a1b453_0
-  - libspatialite=4.3.0a=h51df0ed_1038
-  - libssh2=1.8.2=h642c060_2
+  - libprotobuf=3.13.0.1=h200bbdf_0
+  - libspatialite=4.3.0a=h582a839_1023
+  - libssh2=1.9.0=h7a1dbc1_1
   - libtiff=4.1.0=h885aae3_6
-  - libwebp-base=1.1.0=hfa6e2cd_3
-  - libxml2=2.9.10=h5d81f1c_1
-  - lz4-c=1.9.2=h62dcd97_1
-  - m2w64-expat=2.1.1=2
-  - m2w64-gcc-libgfortran=5.3.0=6
-  - m2w64-gcc-libs=5.3.0=7
-  - m2w64-gcc-libs-core=5.3.0=7
-  - m2w64-gettext=0.19.7=2
-  - m2w64-gmp=6.1.0=2
-  - m2w64-libiconv=1.14=6
-  - m2w64-libwinpthread-git=5.0.0.4634.697f757=2
-  - m2w64-xz=5.2.2=2
-  - mako=1.1.0=py_0
-  - markdown=3.2.2=py_0
-  - markupsafe=1.1.1=py36h68a101e_1
-  - mkl=2020.0=166
+  - libxml2=2.9.10=hb89e7f3_3
+  - lz4-c=1.9.2=h33f27b4_0
+  - mako=1.1.4=pyh44b312d_0
+  - markdown=3.3.2=py36_0
+  - markupsafe=1.1.1=py36h68aa20f_3
+  - mkl=2019.4=245
   - mkl-service=2.3.0=py36hb782905_0
-  - msys2-conda-epoch=20160418=1
-  - numpy=1.18.4=py36h4d86e3b_0
+  - mkl_fft=1.2.0=py36h45dec08_0
+  - mkl_random=1.1.0=py36h675688f_0
+  - multidict=4.7.6=py36he774522_1
+  - numpy=1.19.1=py36h5510c5b_0
+  - numpy-base=1.19.1=py36ha3acd2a_0
+  - oauthlib=3.1.0=py_0
   - openjpeg=2.3.1=h57dd2e7_3
-  - openssl=1.1.1g=he774522_0
-  - pcre=8.44=h6538335_0
-  - pip=20.0.2=py36_3
-  - poppler=0.67.0=h1707e21_8
-  - poppler-data=0.4.9=1
-  - postgresql=12.2=he14cc48_1
-  - proj=7.0.0=haa36216_3
-  - protobuf=3.11.4=py36h97ec31f_1
-  - pygpu=0.7.6=py36hc8d92b1_1000
-  - pyreadline=2.1=py36_1001
-  - python=3.6.10=h9f7ef89_2
+  - openssl=1.1.1h=he774522_0
+  - opt_einsum=3.1.0=py_0
+  - pip=21.0.1=py36haa95532_0
+  - proj4=4.9.3=hcf24537_7
+  - protobuf=3.13.0.1=py36ha925a31_1
+  - pyasn1=0.4.8=py_0
+  - pyasn1-modules=0.2.8=py_0
+  - pycparser=2.20=py_2
+  - pygpu=0.7.6=py36h6434af4_1002
+  - pyjwt=1.7.1=py36_0
+  - pyopenssl=19.1.0=py_1
+  - pysocks=1.7.1=py36_0
+  - python=3.6.13=h3758d61_0
   - python_abi=3.6=1_cp36m
-  - pyyaml=5.3.1=py36h68a101e_0
-  - scikit-learn=0.22.1=py36h6288b17_0
-  - scipy=1.4.1=py36h9439919_0
-  - setuptools=46.2.0=py36_0
-  - six=1.14.0=py_1
-  - sqlite=3.31.1=h2a8f88b_1
-  - tbb=2018.0.5=he980bc4_0
-  - tensorboard=1.13.1=py36_0
-  - tensorflow=1.13.2=h21ff451_0
-  - tensorflow-base=1.13.2=py36_0
-  - tensorflow-estimator=1.13.0=py36h39e3cac_0
-  - termcolor=1.1.0=py_2
-  - theano=1.0.4=py36h6538335_1001
-  - tiledb=1.7.7=h0b90766_1
+  - pyyaml=5.4.1=py36h2bbff1b_1
+  - requests=2.24.0=py_0
+  - requests-oauthlib=1.3.0=py_0
+  - rsa=4.6=py_0
+  - scikit-learn=0.23.2=py36h47e9c7a_0
+  - scipy=1.5.2=py36h9439919_0
+  - setuptools=52.0.0=py36haa95532_0
+  - six=1.15.0=py_0
+  - sqlite=3.35.1=h2bbff1b_0
+  - tensorboard=2.2.1=pyh532a8cf_0
+  - tensorboard-plugin-wit=1.6.0=py_0
+  - tensorflow=2.1.0=gpu_py36h3346743_0
+  - tensorflow-base=2.1.0=gpu_py36h55f5790_0
+  - tensorflow-estimator=2.1.0=pyhd54b08b_0
+  - tensorflow-gpu=2.1.0=h0d30ee6_0
+  - termcolor=1.1.0=py36_1
+  - theano=1.0.5=py36he2d232f_1
+  - threadpoolctl=2.1.0=pyh5ca1d4c_0
   - tk=8.6.10=hfa6e2cd_0
-  - vc=14.1=h0510ff6_4
-  - vs2015_runtime=14.16.27012=hf0eaf9b_1
-  - vs2015_win-64=14.0.25420=h55c1224_11
-  - werkzeug=1.0.1=pyh9f0ad1d_0
-  - wheel=0.34.2=py36_0
+  - typing_extensions=3.7.4.3=py_0
+  - urllib3=1.25.11=py_0
+  - vc=14.2=h21ff451_1
+  - vs2015_runtime=14.27.29016=h5e58377_2
+  - vs2017_win-64=19.16.27038=h2e3bad8_2
+  - vswhere=2.8.4=h57928b3_0
+  - werkzeug=0.16.1=py_0
+  - wheel=0.36.2=pyhd3eb1b0_0
+  - win_inet_pton=1.1.0=py36_0
   - wincertstore=0.2=py36h7fe50ca_0
-  - xerces-c=3.2.2=h6538335_1004
-  - xz=5.2.5=h2fa13f4_0
-  - yaml=0.2.4=he774522_0
-  - zipp=3.1.0=py_0
-  - zlib=1.2.11=h62dcd97_4
+  - wrapt=1.12.1=py36he774522_1
+  - xerces-c=3.2.3=ha925a31_0
+  - xz=5.2.5=h62dcd97_0
+  - yaml=0.2.5=he774522_0
+  - yarl=1.6.2=py36he774522_0
+  - zipp=3.3.1=py_0
+  - zlib=1.2.11=vc14h1cdd9ab_1
   - zstd=1.4.4=h9f78265_3
-prefix: C:\Users\Venky\.conda\envs\keras
-
