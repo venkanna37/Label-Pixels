@@ -70,6 +70,8 @@ def image_from_patches(result, idx, patchsize, t_rows, t_cols):
 def tile_predict(args):
     if args.model == "unet":
         model = load_model(args.weights)
+    if args.model == "unet_mini":
+        model = load_model(args.weights)
     elif args.model == "resunet":
         model = load_model(args.weights)
     elif args.model == "segnet":

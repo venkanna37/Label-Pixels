@@ -1,28 +1,5 @@
 import argparse
-from models import unet_model, resunet_model, segnet_model
-
-
-def summary(args):
-    if args.model == "unet":
-        model = unet_model.unet(args)
-        model.summary()
-    elif args.model == "resunet":
-        model = resunet_model.build_res_unet(args)
-        model.summary()
-    elif args.model == "segnet":
-        model = segnet_model.create_segnet(args)
-        model.summary()
-    elif args.model == "linknet":
-        # pretrained_encoder = 'True',
-        # weights_path = './checkpoints/linknet_encoder_weights.h5'
-        model = LinkNet(1, input_shape=(256, 256, 3))
-        model = model.get_model()
-        model.summary()
-    elif args.model == "DLinkNet":
-        model = segnet_model.create_segnet(args)
-        model.summary()
-    else:
-        print("The model name should be from the unet, resunet, linknet or segnet")
+from models import lp_utils as lu
 
 
 if __name__ == '__main__':
@@ -30,5 +7,7 @@ if __name__ == '__main__':
     parser.add_argument("--model", type=str, help="Model name, should be from unet, resunet, segnet")
     parser.add_argument("--input_shape", nargs='+', type=int, help="Input shape of the model (rows, columns, channels)")
     parser.add_argument("--num_classes", type=int, help="Number of classes in label data")
+    parser.add_argument("--weights", type=str, help="Name and path of the trained model", default=None)
     args = parser.parse_args()
-    summary(args)
+    model = lu.select_model(args)
+    model.summary()
