@@ -55,15 +55,13 @@ cd tools
 --labels_atr| Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value. 
 
 <b>Examples:</b>
-```commandline
+
 python rasterize.py --raster_dir ../data/spacenet/raster/ --raster_format tif
  --vector_dir ../data/spacenet/vector/ --vector_format shp --buffer 2
   --output_dir ../data/spacenet/labels/ --label_atr partialDec --buffer_atr lanes
-```
-```commandline
+
 python rasterize.py --raster_dir ../data/spacenet/raster/ --vector_dir ../data/spacenet/vector_multi/
  --vector_format shp --output_dir ../data/spacenet/labels/ --label_atr value
-```
 
 ###  Patch Generation
 * Generate patches from images/tiles
@@ -83,11 +81,9 @@ python rasterize.py --raster_dir ../data/spacenet/raster/ --vector_dir ../data/s
 
 <b> Example: </b>
 
-```commandline
 python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_format tiff
  --label_folder ../data/mass_sample/test/roads_and_buildings/ --label_format tif --patch_size 256
-  --output_folder ../data/mass_patches/
-```
+ --output_folder ../data/mass_patches/
 
 ### CSV Paths
 * Save directories of patches in CSV file instead of reading patches from folders directly
@@ -104,10 +100,8 @@ python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_forma
 
 <b> Example </b>
 
-```commandline
 python csv_paths.py --image_folder ../data/mass_patches/image/ --label_folder ../data/mass_patches/label/
  --output_csv ../paths/data_rnb.csv
-```
 
 ###  Training
 * Training FCNs (UNet, SegNet, ResUNet and UNet-Mini) for semantic segmentation 
@@ -127,10 +121,8 @@ python csv_paths.py --image_folder ../data/mass_patches/image/ --label_folder ..
 
 <b> Example </b>
 
-```commandline
 python train.py --model unet_mini --train_csv ../paths/data_rnb.csv --valid_csv ../paths/data_rnb.csv
 --input_shape 256 256 3 --batch_size 4 --num_classes 3 --epochs 100
-```
 
 ###  Accuracy
 * Calculates the accuracy using different accuracy metrics.
@@ -145,10 +137,8 @@ python train.py --model unet_mini --train_csv ../paths/data_rnb.csv --valid_csv 
 
 <b> Example </b>
 
-```commandline
 python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet_mini300_06_07_20.hdf5
 --csv_paths ../paths/data_rnb.csv --num_classes 3
-```
 
 ###  Prediction
 * Predicts the entire image/tile with trained model.
@@ -164,11 +154,8 @@ python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../traine
 
 <b> Example: </b>
 
-```commandline
-python tile_predict.py --model unet_mini --input_shape 256 256 3
- --weights ../trained_models/unet_mini300_06_07_20.hdf5 --image_folder ../data/mass_sample/test/image/
-  --image_format tiff --output_folder ../data/predictions/
-```
+python tile_predict.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet_mini300_06_07_20.hdf5
+--image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/predictions/
 
 ### Summary of the Model
 * Summary of FCNs
@@ -183,9 +170,7 @@ python tile_predict.py --model unet_mini --input_shape 256 256 3
 
 <b> Example </b>
 
-```commandline
 python summary.py --model unet_mini --input_shape 256 256 3 --num_classes 3
-```
 
 ### Example Outputs
 <p align="center">
