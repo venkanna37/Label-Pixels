@@ -32,7 +32,7 @@ def rasterize(args):
     r_files, v_files, r_not_matched_files, v_not_matched_files = check_filenames(raster_files, vector_files)
 
     assert len(r_files) != 0 and len(v_files) != 0 and len(v_files) == len(r_files)
-    print("Rasterizing " + str(len(r_files)) + " files" + "\n")
+    print("Rasterizing " + str(len(r_files)) + " file(s)" + "\n")
 
     for r, v in zip(r_files, v_files):
         # Loop through raster and vector files and rasterize
@@ -81,9 +81,9 @@ def rasterize(args):
         geom = feature.GetGeometryRef()
 
         if geom.GetGeometryType() == ogr.wkbLineString:
-            rasterize_line(v_layer, args.buffer, args.buffer_atr, driver, vector_epsg, target_ds)
+            rasterize_line(v_layer, args.buffer, args.buffer_atr, driver, vector_epsg, target_ds, args.label_atr)
         elif geom.GetGeometryType() == ogr.wkbPolygon:
-            rasterize_polygon(v_layer, target_ds)
+            rasterize_polygon(v_layer, target_ds, args.label_atr)
         else:
             print("The Geometry type is neither Polygon nor Line")
 
@@ -91,7 +91,7 @@ def rasterize(args):
 # print("Rasterize N number of file" + "\n" + "Failed to rasterize N number of files")
 
 
-def rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds):
+def rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds, label_atr):
 
     """
     Rasterizing line feature with taking buffer from command line or attributes
@@ -115,6 +115,8 @@ def rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds):
     lyrBuffer = ds.CreateLayer('buffer', geom_type=ogr.wkbPolygon, srs=geosr)
     featureDefn = lyrBuffer.GetLayerDefn()
     feature = v_layer.GetNextFeature()
+    fieldDefn = feature.GetFieldDefnRef(label_atr)
+    lyrBuffer.CreateField(fieldDefn)
 
     while feature:
         if buffer_atr:
@@ -128,6 +130,7 @@ def rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds):
                 sys.exit()
         else:
             buffer_width = buffer
+        label_atr_value = feature.GetField(label_atr)
         geomTest = feature.GetGeometryRef()
         if vector_epsg == "4326":
             # Getting spatial reference of input raster
@@ -143,15 +146,22 @@ def rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds):
             geomBuffer = geomTest.Buffer(buffer_width)
         outFeature = ogr.Feature(featureDefn)
         outFeature.SetGeometry(geomBuffer)
+        outFeature.SetField(label_atr, label_atr_value)
         lyrBuffer.CreateFeature(outFeature)
         outFeature.Destroy()
         feature = v_layer.GetNextFeature()
-    gdal.RasterizeLayer(target_ds, [1], lyrBuffer)
-    target_ds = None
+    if label_atr:
+        label_atri = ["ATTRIBUTE=" + label_atr]
+        # gdal.RasterizeLayer(ds,bands,layer,burn_values, options = ["BURN_VALUE_FROM=Z"])
+        gdal.RasterizeLayer(target_ds, [1], lyrBuffer, options=label_atri)
+        target_ds = None
+    else:
+        gdal.RasterizeLayer(target_ds, [1], v_layer)
+        target_ds = None
     ds = None
 
 
-def rasterize_polygon(v_layer, target_ds):
+def rasterize_polygon(v_layer, target_ds, label_atr):
     """
     Rasterizing polygon data
     :param v_file:
@@ -159,10 +169,10 @@ def rasterize_polygon(v_layer, target_ds):
     :return:
     """
 
-    if args.label_atr:
-        label_atr = ["ATTRIBUTE=" + args.label_atr]
+    if label_atr:
+        label_atri = ["ATTRIBUTE=" + label_atr]
         # gdal.RasterizeLayer(ds,bands,layer,burn_values, options = ["BURN_VALUE_FROM=Z"])
-        gdal.RasterizeLayer(target_ds, [1], v_layer, options=label_atr)
+        gdal.RasterizeLayer(target_ds, [1], v_layer, options=label_atri)
         target_ds = None
     else:
         gdal.RasterizeLayer(target_ds, [1], v_layer)
@@ -193,8 +203,8 @@ def check_filenames(raster_files, vector_files):
         else:
             r_files.append(i)
             v_files.append(j)
-    print("Number of matched files: " + str(len(r_files)))
-    print("Number of not matched files: " + str(len(r_not_matched_files)) + "\n")
+    print("Number of matched file(s): " + str(len(r_files)))
+    print("Number of unmatched file(s): " + str(len(r_not_matched_files)) + "\n")
     return r_files, v_files, r_not_matched_files, v_not_matched_files
 
 

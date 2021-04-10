@@ -26,6 +26,7 @@ cd Label-Pixels
 ```commandline
 conda env create -f environment.yml
 conda activate label-pixels
+cd tools
 ```
 ### Usage
 
@@ -39,27 +40,34 @@ conda activate label-pixels
 * Projection units should be in meters if you want to buffer line feature
 * `--buffer` not required for polygon
 * `--labels_atr` not required for line and single class
+* output directory has to create to save label images `Ex: ../data/spacenet/labels/`
 
 | options | Description |
 ----------|--------------
 --help| Print usage information
---raster| Raster/Image name with directory
---vector| Vector file name with directory
---output_file| Output filename with directory
+--raster_dir| Directory that contains raster image/images
+--vector_dir| Directory that contains vector files with the same projection as raster data. And name of the vector and raster files should be same.
+--raster_format| Raster format of the image/images
+--vector_format| Vector format ex: shp, geojson, etc.
+--output_dir| Output directory to save labels
 --buffer| Buffer length for line feature. Not required for polygon
---buffer_atr| Attribute from the vector file, this attribute can be buffer width and It multiplies with --buffer.
+--buffer_atr| Attribute from the vector file, this attribute can be buffer width and it multiplies with `--buffer`.
 --labels_atr| Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value. 
 
-<b>Example:</b>
+<b>Examples:</b>
 
-python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif
---vector ../data/spacenet/vector/spacenet_chip0.shp --buffer 2 --buffer_atr lanes
---output_file ../data/spacenet/binary/test.tif
+python rasterize.py --raster_dir ../data/spacenet/raster/ --raster_format tif
+ --vector_dir ../data/spacenet/vector/ --vector_format shp --buffer 2
+  --output_dir ../data/spacenet/labels/ --label_atr partialDec --buffer_atr lanes
+
+python rasterize.py --raster_dir ../data/spacenet/raster/ --vector_dir ../data/spacenet/vector_multi/
+ --vector_format shp --output_dir ../data/spacenet/labels/ --label_atr value
 
 ###  Patch Generation
-* Generate patches from Images/Tiles
-* To generate patches for train, test and valid sets, the command needs to be run three times
+* Generate patches from images/tiles
+* To generate patches for train, test and validation sets, the command needs to be run three times
 * Name of image and label files should be same
+* Output directory has to create to save patches `Ex: ../data/mass_patches/`
 
 | options | Description |
 ----------|--------------
@@ -68,16 +76,18 @@ python rasterize.py --raster ../data/spacenet/raster/spacenet_chip0.tif
 --label_folder | Folder of label images with directory
 --label_format | Label format tiff/tif/jpg/png
 --patch_size | Patch size to feed network. Default size is 256
---overlap | Overlap between two patches on image/tile
+--overlap | Overlap between two patches on image/tile (units: pixels)
 --output_folder | Output folder to save patches
 
 <b> Example: </b>
 
-python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_format tiff --label_folder
-../data/mass_sample/test/roads_and_buildings/ --label_format tif --patch_size 256 --output_folder ../data/mass_patches/
+python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_format tiff
+ --label_folder ../data/mass_sample/test/roads_and_buildings/ --label_format tif --patch_size 256
+ --output_folder ../data/mass_patches/
 
 ### CSV Paths
 * Save directories of patches in CSV file instead of reading patches from folders directly
+* Output directory has to create to save the csv files `Ex: ../paths/`
 
 | options | Description |
 ----------|--------------
@@ -90,22 +100,21 @@ python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_forma
 
 <b> Example </b>
 
-python csv_paths.py --image_folder ../data/mass_patches/image/ --image_format tif --label_folder
-../data/mass_patches/label/ --label_format tif --output_csv ../paths/data_rnb.csv
-
+python csv_paths.py --image_folder ../data/mass_patches/image/ --label_folder ../data/mass_patches/label/
+ --output_csv ../paths/data_rnb.csv
 
 ###  Training
-* Training FCNs for semantic segmentation
+* Training FCNs (UNet, SegNet, ResUNet and UNet-Mini) for semantic segmentation 
 * For Binary classification, `--num_classes = 1`
 * For Binary classification with one-hot encoding, `--num_classes = 2`
-* For multi class classification, `--num_classes = number of classes (>1)`
+* For multi class classification, `--num_classes = number of target classes (>1)`
 
 | options | Description |
 ----------|--------------
---model | Name of FCN model. Existing models are unet, unet_mini, segnet and resunet
+--model | Name of the FCN model. Existing models are unet, unet_mini, segnet and resunet
 --train_csv | CSV file name with directory, consists of directories of image and label patches of training set.
 --valid_csv | CSV file name with directory, consists of directories of image and label patches of validation set.
---input_shape | Input shape of model to feed (patch_size patch_size channels)
+--input_shape | Input shape of model to feed patches (patch_size patch_size channels)
 --batch_size | Batch size, depends on GPU/CPU memory
 --num_classes | Number of classes in labels data
 --epochs | Number of epochs
@@ -117,10 +126,11 @@ python train.py --model unet_mini --train_csv ../paths/data_rnb.csv --valid_csv 
 
 ###  Accuracy
 * Calculates the accuracy using different accuracy metrics.
+* IoU, F1-Score, Precision and Recall
 
 | options | Description |
 ----------|--------------
---input_shape | Input shape of model (patch_size patch_size channels)
+--input_shape | Input shape of model (patch_size, patch_size, channels)
 --weights | Trained model with directory
 --csv_paths | CSV file name with directory, consists of directories of image and label patches of test set.
 --num_classes | Number of classes in labels data
@@ -131,11 +141,12 @@ python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../traine
 --csv_paths ../paths/data_rnb.csv --num_classes 3
 
 ###  Prediction
-* Predicts the the entire image/tile with trained model.
+* Predicts the entire image/tile with trained model.
+* Output directory has to create to save the predicted images `Ex: ../data/predictions/`
 
 | options | Description |
 ----------|--------------
---input_shape | Input shape of model (patch_size patch_size channels)
+--input_shape | Input shape of model (patch_size, patch_size, channels)
 --weights | Trained model with directory
 --image_folder | Folder of input images/tiles with directory
 --image_format | Image format tiff/tif/jpg/png
@@ -143,11 +154,13 @@ python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../traine
 
 <b> Example: </b>
 
-python tile_predict.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet300_06_07_20.hdf5
---image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/
+python tile_predict.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet_mini300_06_07_20.hdf5
+--image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/predictions/
 
 ### Summary of the Model
 * Summary of FCNs
+* Useful to check the configuration of Fully Convolutional Networks
+* Replace `unet, segnet and resunet` with `unet_mini` to check configuration of all netowrks
 
 | options | Description |
 ----------|--------------
@@ -157,7 +170,7 @@ python tile_predict.py --model unet_mini --input_shape 256 256 3 --weights ../tr
 
 <b> Example </b>
 
-python summary.py --model unet --input_shape 256 256 3 --num_classes 3
+python summary.py --model unet_mini --input_shape 256 256 3 --num_classes 3
 
 ### Example Outputs
 <p align="center">
