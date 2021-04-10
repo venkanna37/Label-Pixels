@@ -11,7 +11,7 @@ class DataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
 
     def __init__(self, image_paths, label_paths, batch_size=32, n_classes=2, n_channels=3, patch_size=128,
-                 shuffle=True, rs=255):
+                 shuffle=True, rs=255, rs_label=1):
         'Initialization'
         self.batch_size = batch_size
         self.label_paths = label_paths
@@ -21,6 +21,7 @@ class DataGenerator(keras.utils.Sequence):
         self.patch_size = patch_size
         self.shuffle = shuffle
         self.rescale_value = rs
+        self.rs_label = rs_label
         self.on_epoch_end()
 
     def __len__(self):
@@ -36,7 +37,7 @@ class DataGenerator(keras.utils.Sequence):
         list_image_temp = [self.image_paths[k] for k in indexes]
         list_label_temp = [self.label_paths[k] for k in indexes]
         # Generate data
-        X, y = self.__data_generation(list_image_temp, list_label_temp, n_classes, self.rescale_value)
+        X, y = self.__data_generation(list_image_temp, list_label_temp, n_classes, self.rescale_value, self.rs_label)
         return X, y
 
     def on_epoch_end(self):
@@ -45,7 +46,7 @@ class DataGenerator(keras.utils.Sequence):
         if self.shuffle == True:
             np.random.shuffle(self.indexes)
 
-    def __data_generation(self, image_paths, label_paths, n_classes, rescale_value):
+    def __data_generation(self, image_paths, label_paths, n_classes, rescale_value, rs_label):
         'Generates data containing batch_size samples'  # X : (n_samples, *dim, n_channels)
         # Initialization
         X = []
@@ -57,7 +58,7 @@ class DataGenerator(keras.utils.Sequence):
             _label = gdal.Open(label)
             _image = np.array(_image.ReadAsArray()) / rescale_value
             _image = _image.transpose(1, 2, 0)
-            _label = np.array(_label.ReadAsArray())
+            _label = np.array(_label.ReadAsArray()) / rs_label
             _label = np.expand_dims(_label, axis=-1)
             # print(_label.shape)
             if n_classes > 1:

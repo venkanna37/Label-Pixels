@@ -27,10 +27,11 @@ def train(args):
     model.compile(optimizer="adam", loss=loss_fun, metrics=["acc"])
     input_shape = args.input_shape
     train_gen = datagen.DataGenerator(image_paths, label_paths, batch_size=args.batch_size, n_classes=args.num_classes,
-                                      n_channels=input_shape[2], patch_size=input_shape[1], shuffle=True, rs=rs)
+                                      n_channels=input_shape[2], patch_size=input_shape[1], shuffle=True, rs=rs,
+                                      rs_label=args.rs_label)
     valid_gen = datagen.DataGenerator(valid_image_paths, valid_label_paths, batch_size=args.batch_size,
                                       n_classes=args.num_classes, n_channels=input_shape[2], patch_size=input_shape[1],
-                                      shuffle=True, rs=rs)
+                                      shuffle=True, rs=rs, rs_label=args.rs_label)
     train_steps = len(image_paths) // args.batch_size
     valid_steps = len(valid_image_paths) // args.batch_size
     model_name = args.model
@@ -56,6 +57,7 @@ if __name__ == '__main__':
     parser.add_argument("--num_classes", type=int, help="Number of classes")
     parser.add_argument("--epochs", type=int, help="Number of epochs")
     parser.add_argument("--rs", type=int, help="Radiometric resolution of the image", default=8)
+    parser.add_argument("--rs_label", type=int, help="Rescaling labels if they are not single digits", default=1)
     parser.add_argument("--weights", type=str, help="Name and path of the trained model")
     args = parser.parse_args()
     train(args)

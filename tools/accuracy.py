@@ -25,7 +25,7 @@ def accuracy(args):
         image_array = np.array(image.ReadAsArray()) / rescale_value
         image_array = image_array.transpose(1, 2, 0)
         label = gdal.Open(test_label_paths[i])
-        label_array = np.array(label.ReadAsArray())
+        label_array = np.array(label.ReadAsArray()) / args.rs_label
         label_array = np.expand_dims(label_array, axis=-1)
         fm = np.expand_dims(image_array, axis=0)
         result_array = model.predict(fm)
@@ -36,7 +36,7 @@ def accuracy(args):
             result_array = np.around(result_array.flatten())
         y.append(np.around(label_array))
         y_pred.append(result_array)
-        print("Predicted " + str(i + 1) + " Images")
+        print("Predicted " + str(i + 1) + " Patches")
     print("\n")
     print("list of classes from predictions: " + str(np.unique(np.array(y_pred))))
     print("list of classes from labels: " + str(np.unique(np.array(y))))
@@ -74,5 +74,6 @@ if __name__ == '__main__':
     parser.add_argument("--csv_paths", type=str, help="CSV file with image and label paths")
     parser.add_argument("--num_classes", type=int, help="Number of classes")
     parser.add_argument("--rs", type=int, help="Radiometric resolution of the image", default=8)
+    parser.add_argument("--rs_label", type=int, help="Rescaling labels if they are not single digits", default=1)
     args = parser.parse_args()
     accuracy(args)
