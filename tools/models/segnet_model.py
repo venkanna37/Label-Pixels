@@ -7,7 +7,6 @@ from typing import Tuple, List, Text, Dict, Any, Iterator
 import numpy as np
 import h5py
 from keras.engine.training import Model as tModel
-from keras.applications.vgg16 import VGG16
 from keras.models import Model
 from keras import layers
 from keras.layers import Input
@@ -70,14 +69,14 @@ def write_new_VGG_weights(input_shape, oldfname, outfname):
     return outfname
 
 
-def VGG16_encoder(input_shape, init=False):
+def VGG16_encoder(input_shape, init=True):
     """Creates a VGG16 encoder with reshaped input dimensions."""
-    ROOTDIR = "./"
+    root_dir = "./models/"
     input_tensor = Input(shape=input_shape)
     if init:
-        weights_fname = ROOTDIR + "vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5"
-    if (init and input_shape[2]!=3):
-        outfname = ROOTDIR + "vgg16_with_" + str(input_shape[2]) + "_bands.h5"
+        weights_fname = root_dir + "vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5"
+    if init and input_shape[2] != 3:
+        outfname = root_dir + "vgg16_with_" + str(input_shape[2]) + "_bands.h5"
         weights_fname = write_new_VGG_weights(input_shape, weights_fname, outfname)
 
     x = layers.Conv2D(64, (3, 3),
@@ -156,7 +155,7 @@ def VGG16_encoder(input_shape, init=False):
 def create_segnet(args, indices=True, ker_init="he_normal") -> tModel:
 
     input_shape = tuple(args.input_shape)
-    encoder = VGG16_encoder(input_shape, init=False)
+    encoder = VGG16_encoder(input_shape, init=True)
 
     L = [layer for i, layer in enumerate(encoder.layers)] # type: List[Layer]
     #for layer in L: layer.trainable = False # freeze VGG16
@@ -198,14 +197,14 @@ def create_segnet(args, indices=True, ker_init="he_normal") -> tModel:
 
     x = Conv2D(args.num_classes, (1, 1), padding='valid', kernel_initializer=ker_init)(x)
 
-    if args.num_classes != 1:
-        x = Activation('softmax')(x)
-    else:
+    if args.num_classes == 1:
         x = Activation('sigmoid')(x)
+    elif args.num_classes > 1:
+        x = Activation('softmax')(x)
     
     predictions = x
 
-    segnet = Model(inputs=encoder.inputs, outputs=predictions) # type: tModel
+    segnet = Model(inputs=encoder.inputs, outputs=predictions)  # type: tModel
 
     return segnet
 
