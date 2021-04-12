@@ -1,14 +1,11 @@
 import gdal
-import csv
 import numpy as np
 from tensorflow.keras.models import load_model
 from models import segnet_model
 import os
-from sklearn.metrics import confusion_matrix
 import argparse
-import sys
 import glob
-
+from models import lp_utils as lu
 
 def gtiff_to_array(file_path):
     """Takes a file path and returns a tif file as a 3-dimensional numpy array, width x height x bands."""
@@ -18,7 +15,7 @@ def gtiff_to_array(file_path):
     return np.stack(bands, axis=2)
 
 
-def gridwise_sample(imgarray, patchsize):
+def gridwise_sample(imgarray, patchsize, rs):
     """Extract sample patches of size patchsize x patchsize from an image (imgarray) in a gridwise manner.
     """
     patchidx = []
@@ -30,22 +27,22 @@ def gridwise_sample(imgarray, patchsize):
             if i+1 <= int(nrows / patchsize) and j+1 <= int(ncols / patchsize):
                 tocat = imgarray[i * patchsize:(i + 1) * patchsize,
                         j * patchsize:(j + 1) * patchsize, :]
-                tocat = np.expand_dims(tocat, axis=0) / 255
+                tocat = np.expand_dims(tocat, axis=0) / rs
                 patchsamples = np.concatenate((patchsamples, tocat), axis=0)
                 patchidx.append([i, j])
             elif i+1 <= int(nrows / patchsize) and j+1 >= int(ncols / patchsize):
                 tocat = imgarray[i * patchsize:(i + 1) * patchsize, -patchsize:, :]
-                tocat = np.expand_dims(tocat, axis=0) / 255
+                tocat = np.expand_dims(tocat, axis=0) / rs
                 patchsamples = np.concatenate((patchsamples, tocat), axis=0)
                 patchidx.append([i, j])
             elif i+1 >= int(nrows / patchsize) and j+1 <= int(ncols / patchsize):
                 tocat = imgarray[-patchsize:, j * patchsize:(j + 1) * patchsize, :]
-                tocat = np.expand_dims(tocat, axis=0) / 255
+                tocat = np.expand_dims(tocat, axis=0) / rs
                 patchsamples = np.concatenate((patchsamples, tocat), axis=0)
                 patchidx.append([i, j])
             elif i+1 >= int(nrows / patchsize) and j+1 >= int(ncols / patchsize):
                 tocat = imgarray[-patchsize:, -patchsize:, :]
-                tocat = np.expand_dims(tocat, axis=0) / 255
+                tocat = np.expand_dims(tocat, axis=0) / rs
                 patchsamples = np.concatenate((patchsamples, tocat), axis=0)
                 patchidx.append([i, j])
 
@@ -81,18 +78,23 @@ def tile_predict(args):
     _, p_rows, p_cols, p_chan = model.layers[0].input_shape[0] # Patch shape
     image_paths = sorted(glob.glob(args.image_folder + "*." + args.image_format))
     outdriver = gdal.GetDriverByName("GTiff")
+    rs = lu.rescaling_value(args.rs)
 
     for i in range(len(image_paths)):
         image = gdal.Open(image_paths[i])
         image_array = np.array(image.ReadAsArray())
         image_array = image_array.transpose(1, 2, 0)
         t_rows, t_cols, t_chan = image_array.shape
-        image_patches, patchidx = gridwise_sample(image_array, p_rows) #Tile size takes from image and patch size from trained model
+        image_patches, patchidx = gridwise_sample(image_array, p_rows, rs) #Tile size takes from image and patch size from trained model
         result = np.zeros(shape=(0, p_rows, p_cols, 1))
+        print(result.shape)
         for j in range(image_patches.shape[0]):
             patch = np.expand_dims(image_patches[j], axis=0)
             patch_result = model.predict(patch)
-            patch_result = np.expand_dims(np.argmax(patch_result, axis=3), axis=-1)
+            if args.num_classes == 1:
+                patch_result = patch_result
+            elif args.num_classes > 1:
+                patch_result = np.expand_dims(np.argmax(patch_result, axis=3), axis=-1)
             result = np.concatenate((result, patch_result), axis=0)
         # print(result.shape)
         result_array = image_from_patches(result, patchidx, p_rows, t_rows, t_cols)
@@ -119,5 +121,7 @@ if __name__ == '__main__':
     parser.add_argument("--image_folder", type=str, help="Folder of image or images")
     parser.add_argument("--image_format", type=str, help="Image format")
     parser.add_argument("--output_folder", type=str, help="Output path of the predicted images")
+    parser.add_argument("--num_classes", type=int, help="Number of classes")
+    parser.add_argument("--rs", type=int, help="Radiometric resolution of the image", default=8)
     args = parser.parse_args()
     tile_predict(args)

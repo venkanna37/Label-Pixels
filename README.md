@@ -155,7 +155,7 @@ python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../traine
 <b> Example: </b>
 
 python tile_predict.py --model unet_mini --input_shape 256 256 3 --weights ../trained_models/unet_mini300_06_07_20.hdf5
---image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/predictions/
+--image_folder ../data/mass_sample/test/image/ --image_format tiff --output_folder ../data/predictions/ --num_classes 3
 
 ### Summary of the Model
 * Summary of FCNs
