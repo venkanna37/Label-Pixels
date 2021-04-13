@@ -1,7 +1,5 @@
 """
 UNet model with less convolutional layers
- - Layers in origin UNet are [64, 128, 256, 512, 1024]
- - Layers in this network (unet_mini) reduced to [16, 32, 64, 128, 256]
 """
 
 import tensorflow.keras as keras

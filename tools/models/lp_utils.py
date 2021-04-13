@@ -4,7 +4,6 @@ List of functions used in tools
 
 import csv
 import sys
-# from tensorflow.keras.models import load_model
 from models import resunet_model, unet_model, segnet_model, unet_mini
 
 
