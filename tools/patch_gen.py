@@ -1,7 +1,9 @@
 """
 Creatig patches from image/list of images
-:keyword
-patch: size of an image that feed to deep learning models
+
+Author: Venkanna Babu Guthula
+Date: 03-07-2021
+Email: g.venkanna37@gmail.com
 """
 
 import gdal
@@ -9,6 +11,7 @@ import glob
 import numpy as np
 import os
 import argparse
+from models import lp_utils as lu
 
 
 def patch_gen(x):
@@ -29,17 +32,21 @@ def patch_gen(x):
         image_path = image_paths[h]
         label_path = label_paths[h]
         _, image_name = os.path.split(image_path)
-        image_name = image_name[:-format_len_i]
+        image_name = image_name[:-format_len_i-x.slice_im]
         __, label_name = os.path.split(label_path)
-        label_name = label_name[:-format_len_l]
+        label_name = label_name[:-format_len_l-x.slice_la]
         print(image_name, label_name)
         if image_name == label_name:
             image = gdal.Open(image_path)
             image_array = np.array(image.ReadAsArray())
             label = gdal.Open(label_path)
-            label_array = np.array(label.GetRasterBand(1).ReadAsArray())
-            label_array = np.expand_dims(label_array, axis=0)
-            num_channels, num_rows, num_cols = image_array.shape
+            if x.dataset == "deep_lulc":
+                label_array = np.array(label.ReadAsArray())
+                num_channels, num_rows, num_cols = image_array.shape
+            else:
+                label_array = np.array(label.GetRasterBand(1).ReadAsArray())
+                label_array = np.expand_dims(label_array, axis=0)
+                num_channels, num_rows, num_cols = image_array.shape
 
             for i in range(int(num_rows / x.patch_size)):
                 for j in range(int(num_cols / x.patch_size)):
@@ -53,7 +60,11 @@ def patch_gen(x):
                     outfile_image = output_image_folder + image_name + '_' + str(i) + '_' + str(j) + '.tif'
                     outdata_image = outdriver.Create(str(outfile_image), x.patch_size, x.patch_size, 3)
                     outdata_label = outdriver.Create(str(outfile_label), x.patch_size, x.patch_size, 1)
-                    outdata_label.GetRasterBand(1).WriteArray(temp_label[0])
+                    if x.dataset == "deep_lulc":
+                        temp_label = lu.deep_lulc_data(temp_label)
+                    else:
+                        temp_label = temp_label[0]
+                    outdata_label.GetRasterBand(1).WriteArray(temp_label)
                     for k in range(len(temp_image)):
                         outdata_image.GetRasterBand(k + 1).WriteArray(temp_image[k])
             print('Clipped ' + str(h) + ' images')
@@ -69,6 +80,9 @@ if __name__ == '__main__':
     parser.add_argument("--label_format", type=str, help="Label format", default="tif")
     parser.add_argument("--patch_size", type=int, help="Patch size to split the tiles/images", default=256)
     parser.add_argument("--overlap", type=int, help="Overlap between two patches", default=0)
+    parser.add_argument("--slice_im", type=int, help="Slicing image name", default=0)
+    parser.add_argument("--slice_la", type=int, help="Slicing label name", default=0)
     parser.add_argument("--output_folder", type=str, help="Output folder to save images and labels")
+    parser.add_argument("--dataset", type=str, help="label preparation for custom data", default="venky")
     args = parser.parse_args()
     patch_gen(args)
