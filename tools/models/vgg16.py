@@ -17,7 +17,7 @@ from tensorflow.keras import Model
 
 def vgg16(args):
     # input
-    inputs = Input(tuple(args.input_shape))
+    inputs = Input((256, 256, 3))
     # 1st Conv Block
     x = Conv2D(filters=64, kernel_size=3, padding='same', activation='relu')(inputs)
     x = Conv2D(filters=64, kernel_size=3, padding='same', activation='relu')(x)
@@ -46,12 +46,8 @@ def vgg16(args):
     x = Conv2D(filters=512, kernel_size=3, padding='same', activation='relu')(x)
     x = MaxPool2D(pool_size=2, strides=2, padding='same')(x)
 
-    # Fully connected layers  x = Flatten()(x)
-    x = Dense(units=4096, activation='relu')(x)
-    x = Dense(units=4096, activation='relu')(x)
-    output = Dense(units=1000, activation='softmax')(x)
-
-    # Fully connected layers  x = Flatten()(x)
+    # Fully connected layers
+    x = Flatten()(x)
     x = Dense(units=4096, activation='relu')(x)
     x = Dense(units=4096, activation='relu')(x)
 

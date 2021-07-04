@@ -1,16 +1,30 @@
 """
-Training Fully Convolutional Networks
+Train Convolutional Neural Networks (CNNs) and Fully Convolutional Networks (FCNs)
+
+Author: Venkanna Babu Guthula
+Date: 04-07-2021
+Email: g.venkanna37@gmail.com
+
+Limitations:
+CNN architecture (VGG16) not tested with the single class
 """
+
 import argparse
-import tensorflow as tf
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import CSVLogger
 import datetime
 from models import lp_utils as lu
 from models import datagen
+import numpy as K
 
 
-def train(args):
+def custom_sparse_categorical_accuracy(y_true, y_pred):
+    return K.cast(K.equal(K.max(y_true, axis=-1),
+                          K.cast(K.argmax(y_pred, axis=-1), K.floatx())),
+                  K.floatx())
+
+
+def train_fcn(args):
     # Saving image paths as a list
     image_paths, label_paths = lu.file_paths(args.train_csv)
     valid_image_paths, valid_label_paths = lu.file_paths(args.valid_csv)
@@ -37,7 +51,7 @@ def train(args):
     model_name = args.model
     model_file = "../trained_models/" + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y")\
                  + ".hdf5"
-    log_file = "../trained_models/" + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y")\
+    log_file = "../trained_models/" + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") \
                + ".csv"
     # Training the model
     model_checkpoint = ModelCheckpoint(model_file, monitor='val_loss', verbose=1, save_best_only=True)
@@ -45,6 +59,51 @@ def train(args):
     model.fit_generator(train_gen, validation_data=valid_gen, steps_per_epoch=train_steps, validation_steps=valid_steps,
                         epochs=args.epochs, callbacks=[model_checkpoint, csv_logger])
     print("Model successfully trained")
+
+
+def train_cnn(args):
+    # Saving image paths  and labels as a list
+    image_paths, labels = lu.file_paths(args.train_csv)
+    valid_image_paths, valid_label_paths = lu.file_paths(args.valid_csv)
+    # radiometric resolution
+    rs = lu.rescaling_value(args.rs)
+    # Loading model with weights
+    model = lu.select_model(args)
+    if args.num_classes > 1:
+        loss_fun = "categorical_crossentropy"
+        # loss_fun = "sparse_categorical_crossentropy"
+    elif args.num_classes == 1:
+        loss_fun = "binary_crossentropy"
+    else:
+        print("Number of classes not specified")
+    model.compile(optimizer="adam", loss=loss_fun, metrics=["accuracy"])
+    input_shape = args.input_shape
+    train_gen = datagen.DataGenerator(image_paths, labels, net_type=args.net_type, batch_size=args.batch_size,
+                                      n_classes=args.num_classes, patch_size=input_shape[1], shuffle=True, rs=rs)
+    valid_gen = datagen.DataGenerator(valid_image_paths, valid_label_paths, net_type=args.net_type,
+                                      batch_size=args.batch_size, n_classes=args.num_classes, patch_size=input_shape[1],
+                                      shuffle=True, rs=rs)
+    train_steps = len(image_paths) // args.batch_size
+    valid_steps = len(valid_image_paths) // args.batch_size
+    print(train_steps, valid_steps)
+    model_name = args.model
+    model_file = "../trained_models/" + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y")\
+                 + ".hdf5"
+    log_file = "../trained_models/" + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y") \
+               + ".csv"
+    # Training the model
+    model_checkpoint = ModelCheckpoint(model_file, monitor='val_loss', verbose=1, save_best_only=True)
+    csv_logger = CSVLogger(log_file, separator=',', append=False)
+    model.fit_generator(train_gen, validation_data=valid_gen, steps_per_epoch=train_steps, validation_steps=valid_steps,
+                        epochs=args.epochs, callbacks=[model_checkpoint, csv_logger])
+    print("Model successfully trained")
+
+
+def train(args):
+    if args.net_type == "fcn":
+        train_fcn(args)
+    elif args.net_type == "cnn":
+        train_cnn(args)
 
 
 if __name__ == '__main__':
@@ -59,5 +118,6 @@ if __name__ == '__main__':
     parser.add_argument("--rs", type=int, help="Radiometric resolution of the image", default=8)
     parser.add_argument("--rs_label", type=int, help="Rescaling labels if they are not single digits", default=1)
     parser.add_argument("--weights", type=str, help="Name and path of the trained model")
+    parser.add_argument("--net_type", type=str, help="Architecture type cnn or fcn", default="fcn")
     args = parser.parse_args()
     train(args)
