@@ -15,13 +15,7 @@ from keras.callbacks import CSVLogger
 import datetime
 from models import lp_utils as lu
 from models import datagen
-import numpy as K
-
-
-def custom_sparse_categorical_accuracy(y_true, y_pred):
-    return K.cast(K.equal(K.max(y_true, axis=-1),
-                          K.cast(K.argmax(y_pred, axis=-1), K.floatx())),
-                  K.floatx())
+from keras.optimizers import SGD
 
 
 def train_fcn(args):
@@ -40,11 +34,11 @@ def train_fcn(args):
         print("Number of classes not specified")
     model.compile(optimizer="adam", loss=loss_fun, metrics=["acc"])
     input_shape = args.input_shape
-    train_gen = datagen.DataGenerator(image_paths, label_paths, batch_size=args.batch_size, n_classes=args.num_classes,
-                                      n_channels=input_shape[2], patch_size=input_shape[1], shuffle=True, rs=rs,
+    train_gen = datagen.DataGenerator(image_paths, label_paths, batch_size=args.batch_size, net_type=args.net_type,
+                                      n_classes=args.num_classes, patch_size=input_shape[1], shuffle=True, rs=rs,
                                       rs_label=args.rs_label)
     valid_gen = datagen.DataGenerator(valid_image_paths, valid_label_paths, batch_size=args.batch_size,
-                                      n_classes=args.num_classes, n_channels=input_shape[2], patch_size=input_shape[1],
+                                      net_type=args.net_type, n_classes=args.num_classes, patch_size=input_shape[1],
                                       shuffle=True, rs=rs, rs_label=args.rs_label)
     train_steps = len(image_paths) // args.batch_size
     valid_steps = len(valid_image_paths) // args.batch_size
@@ -76,7 +70,8 @@ def train_cnn(args):
         loss_fun = "binary_crossentropy"
     else:
         print("Number of classes not specified")
-    model.compile(optimizer="adam", loss=loss_fun, metrics=["accuracy"])
+    opt = SGD(lr=0.01)
+    model.compile(optimizer=opt, loss=loss_fun, metrics=["accuracy"])
     input_shape = args.input_shape
     train_gen = datagen.DataGenerator(image_paths, labels, net_type=args.net_type, batch_size=args.batch_size,
                                       n_classes=args.num_classes, patch_size=input_shape[1], shuffle=True, rs=rs)
