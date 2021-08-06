@@ -35,10 +35,10 @@ def train(args):
     train_steps = len(image_paths) // args.batch_size
     valid_steps = len(valid_image_paths) // args.batch_size
     model_name = args.model
-    model_file = "../trained_models/" + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y")\
-                 + ".hdf5"
-    log_file = "../trained_models/" + model_name + str(args.epochs) + datetime.datetime.today().strftime("_%d_%m_%y")\
-               + ".csv"
+    model_file = "../trained_models/" + model_name + "_" + str(input_shape[0]) + "_" + str(args.epochs) +\
+                 datetime.datetime.today().strftime("_%d_%m_%y") + ".hdf5"
+    log_file = "../trained_models/" + model_name + "_" + str(input_shape[0]) + "_" + str(args.epochs) +\
+               datetime.datetime.today().strftime("_%d_%m_%y") + ".csv"
     # Training the model
     model_checkpoint = ModelCheckpoint(model_file, monitor='val_loss', verbose=1, save_best_only=True)
     csv_logger = CSVLogger(log_file, separator=',', append=False)
