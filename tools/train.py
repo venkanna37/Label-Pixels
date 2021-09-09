@@ -70,8 +70,8 @@ def train_cnn(args):
         loss_fun = "binary_crossentropy"
     else:
         print("Number of classes not specified")
-    opt = SGD(lr=0.01)
-    model.compile(optimizer=opt, loss=loss_fun, metrics=["accuracy"])
+    OPT = SGD(lr=0.01)
+    model.compile(optimizer=OPT, loss=loss_fun, metrics=["accuracy"])
     input_shape = args.input_shape
     train_gen = datagen.DataGenerator(image_paths, labels, net_type=args.net_type, batch_size=args.batch_size,
                                       n_classes=args.num_classes, patch_size=input_shape[1], shuffle=True, rs=rs)

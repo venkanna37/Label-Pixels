@@ -27,7 +27,7 @@ def csv_gen(args):
             else:
                 print("Image and label names not matched")
     elif args.net_type == "cnn":
-        class_dirs = os.listdir(args.image_folder)  # list directories each
+        class_dirs = os.listdir(args.image_folder)  # list directories each, # write error and exceptions
         label = 0
         for i in class_dirs:
             # loop all picture in directory

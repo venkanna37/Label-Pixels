@@ -75,6 +75,8 @@ class DataGenerator(keras.utils.Sequence):
                 y.append([_label])
 
         X = np.array(X)
+        print(X.shape)
         y = np.array(y)
-        y = to_categorical(y, 21)  # Need to fix for FCN
+        y = to_categorical(y, n_classes)  # Need to fix for FCN
+        print(y.shape)
         return X, y
