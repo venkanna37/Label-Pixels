@@ -1,0 +1,8 @@
+# ignore inpput and output folders
+/trained_models
+/paths
+/data
+/tools/cache
+
+# Ignore all .pyc files
+*.pyc
