@@ -4,7 +4,9 @@ Uses stratified random sampling for CNN inputs
 
 Author: Venkanna Babu Guthula
 Date: 22-09-2021
-Email: g.venkanna37@gmail.com
+
+Example:
+python split_dataset.py --input_csv ../paths/data_rnb.csv --output_dir ../paths/ --file_name rnb_subset --test_per 0.15
 """
 
 import os
@@ -19,9 +21,14 @@ def split_data(args):
     X = data[:, 0]
     y = data[:, 1]
 
+    if args.valid_per is None:
+        valid_per = valid_set(args.test_per)
+    else:
+        valid_per = args.valid_per / (1 - args.valid_per)
+
     # Split dataset
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
-    X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=0.175, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=args.test_per, random_state=42)
+    X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=valid_per, random_state=42)
 
     # Test dataset
     X_test, y_test = np.expand_dims(X_test, axis=-1), np.expand_dims(y_test, axis=-1)
@@ -37,8 +44,13 @@ def split_data(args):
     X_train, y_train = np.expand_dims(X_train, axis=-1), np.expand_dims(y_train, axis=-1)
     train_data = np.hstack((X_train, y_train))
     filename = os.path.join(args.output_dir, args.file_name + "_train.csv")
-    np.savetxt(filename,  train_data, delimiter=",", fmt='%s')
+    np.savetxt(filename, train_data, delimiter=",", fmt='%s')
     print("Train, Test and Validation files created")
+
+
+def valid_set(test_per):
+    # percentage should be in fractions
+    return test_per / (1 - test_per)
 
 
 if __name__ == '__main__':
@@ -48,7 +60,8 @@ if __name__ == '__main__':
                         , default="../paths")
     parser.add_argument("--file_name", type=str, help="At the end of this file name, train, test, valid add for each"
                                                       " set")
-    # parser.add_argument("--per_test_valid", type=int, help="Percentage of test and valid set", default="15")   # This has to change
-    # parser.add_argument("--net_type", type=str, help="Architecture type CNN or FCN", default="fcn")
+    parser.add_argument("--test_per", type=float, help="Percentage of test set", default=0.15)
+    parser.add_argument("--valid_per", type=float, help="Percentage of valid set. if not given, valid per is equal to"
+                                                        " test", default=None)
     args = parser.parse_args()
     split_data(args)
