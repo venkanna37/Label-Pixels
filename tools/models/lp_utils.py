@@ -3,14 +3,13 @@ Utility functions used in tools
 
 Author: Venkanna Babu Guthula
 Date: 03-07-2021
-Email: g.venkanna37@gmail.com
 """
 
 import csv
 import sys
 from models import resunet_model, unet_model, segnet_model, unet_mini  # FCNs
-from models import vgg16  # CNNs
 import numpy as np
+from keras import applications
 
 
 # Load model
@@ -32,13 +31,27 @@ def select_model(args):
         if args.weights:
             model.load_weights(args.weights)
         return model
+
+    # CNN Models (https://keras.io/api/applications)
     elif args.model == "vgg16":
-        model = vgg16.vgg16(args)
+        model = applications.vgg16.VGG16(weights=None, input_shape=args.input_shape, classes=args.num_classes)
+        if args.weights:
+            model.load_weights(args.weights)
+    elif args.model == "resnet50":
+        model = applications.resnet50.ResNet50(weights=None, input_shape=args.input_shape, classes=args.num_classes)
+        if args.weights:
+            model.load_weights(args.weights)
+    elif args.model == "xception":
+        model = applications.xception.Xception(weights=None, input_shape=args.input_shape, classes=args.num_classes)
+        if args.weights:
+            model.load_weights(args.weights)
+    elif args.model == "nasnet":
+        model = applications.nasnet.NASNetLarge(weights=None, input_shape=args.input_shape, classes=args.num_classes)
         if args.weights:
             model.load_weights(args.weights)
     else:
         print(args.model + "Model does not exist, select model from"
-                           " unet, unet_mini, resunet and segnet")
+                           " unet, unet_mini, resunet, segnet, vgg16, resnet50, xception, nasnet")
         sys.exit()
 
     return model

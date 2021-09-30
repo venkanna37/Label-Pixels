@@ -6,7 +6,6 @@ https://towardsdatascience.com/creating-vgg-from-scratch-using-tensorflow-a998a5
 
 Author: Venkanna Babu Guthula
 Date: 03-07-2021
-Email: g.venkanna37@gmail.com
 """
 
 # import necessary layers
@@ -17,7 +16,7 @@ from tensorflow.keras import Model
 
 def vgg16(args):
     # input
-    inputs = Input((256, 256, 3))
+    inputs = Input((224, 224, 3))
     # 1st Conv Block
     x = Conv2D(filters=64, kernel_size=3, padding='same', activation='relu')(inputs)
     x = Conv2D(filters=64, kernel_size=3, padding='same', activation='relu')(x)
