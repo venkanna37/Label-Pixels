@@ -39,7 +39,11 @@ def patch_gen(x):
             label = gdal.Open(label_path)
             label_array = np.array(label.GetRasterBand(1).ReadAsArray())
             label_array = np.expand_dims(label_array, axis=0)
-            num_channels, num_rows, num_cols = image_array.shape
+            if len(image_array.shape) == 2:
+                num_channels = 1
+                num_rows, num_cols = image_array.shape
+            else:
+                num_channels, num_rows, num_cols = image_array.shape
 
             for i in range(int(num_rows / x.patch_size)):
                 for j in range(int(num_cols / x.patch_size)):
@@ -51,7 +55,7 @@ def patch_gen(x):
                     temp_label = label_array[:, x1:y1, x2:y2]
                     outfile_label = output_label_folder + label_name + '_' + str(i) + '_' + str(j) + '.tif'
                     outfile_image = output_image_folder + image_name + '_' + str(i) + '_' + str(j) + '.tif'
-                    outdata_image = outdriver.Create(str(outfile_image), x.patch_size, x.patch_size, 3)
+                    outdata_image = outdriver.Create(str(outfile_image), x.patch_size, x.patch_size, num_channels)
                     outdata_label = outdriver.Create(str(outfile_label), x.patch_size, x.patch_size, 1)
                     outdata_label.GetRasterBand(1).WriteArray(temp_label[0])
                     for k in range(len(temp_image)):
