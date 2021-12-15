@@ -155,7 +155,11 @@ def VGG16_encoder(input_shape, init=True):
 def create_segnet(args, indices=True, ker_init="he_normal") -> tModel:
 
     input_shape = tuple(args.input_shape)
-    encoder = VGG16_encoder(input_shape, init=True)
+    if input_shape[2] == 3:
+        init = True
+    else:
+        init = False
+    encoder = VGG16_encoder(input_shape, init=init)
 
     L = [layer for i, layer in enumerate(encoder.layers)] # type: List[Layer]
     #for layer in L: layer.trainable = False # freeze VGG16
