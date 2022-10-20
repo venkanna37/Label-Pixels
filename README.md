@@ -31,7 +31,7 @@ cd tools
 ### Usage
 
 <p align="center">
-  <img width="900" height="370"  src="/data/methodology2.png">
+  <img width="900" height="370"  src="/data/figures/methodology.png">
 </p>
 
 ###  Rasterize
@@ -42,17 +42,17 @@ cd tools
 * `--labels_atr` not required for line and single class
 * output directory has to create to save label images `Ex: ../data/spacenet/labels/`
 
-| options | Description |
-----------|--------------
---help| Print usage information
---raster_dir| Directory that contains raster image/images
---vector_dir| Directory that contains vector files with the same projection as raster data. And name of the vector and raster files should be same.
---raster_format| Raster format of the image/images
---vector_format| Vector format ex: shp, geojson, etc.
---output_dir| Output directory to save labels
---buffer| Buffer length for line feature. Not required for polygon
---buffer_atr| Attribute from the vector file, this attribute can be buffer width and it multiplies with `--buffer`.
---labels_atr| Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value. 
+| options         | Description                                                                                                                           |
+|-----------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| --help          | Print usage information                                                                                                               |
+| --raster_dir    | Directory that contains raster image/images                                                                                           |
+| --vector_dir    | Directory that contains vector files with the same projection as raster data. And name of the vector and raster files should be same. |
+| --raster_format | Raster format of the image/images                                                                                                     |
+| --vector_format | Vector format ex: shp, geojson, etc.                                                                                                  |
+| --output_dir    | Output directory to save labels                                                                                                       |
+| --buffer        | Buffer length for line feature. Not required for polygon                                                                              |
+| --buffer_atr    | Attribute from the vector file, this attribute can be buffer width and it multiplies with `--buffer`.                                 |
+| --labels_atr    | Attribute from the vector file, pixels inside the polygon will be assigned by its attribute value.                                    |
 
 <b>Examples:</b>
 
@@ -69,15 +69,15 @@ python rasterize.py --raster_dir ../data/spacenet/raster/ --vector_dir ../data/s
 * Name of image and label files should be same
 * Output directory has to create to save patches `Ex: ../data/mass_patches/`
 
-| options | Description |
-----------|--------------
---image_folder | Folder of input images/tiles with directory
---image_format | Image format tiff/tif/jpg/png
---label_folder | Folder of label images with directory
---label_format | Label format tiff/tif/jpg/png
---patch_size | Patch size to feed network. Default size is 256
---overlap | Overlap between two patches on image/tile (units: pixels)
---output_folder | Output folder to save patches
+| options         | Description                                               |
+|-----------------|-----------------------------------------------------------|
+| --image_folder  | Folder of input images/tiles with directory               |
+| --image_format  | Image format tiff/tif/jpg/png                             |
+| --label_folder  | Folder of label images with directory                     |
+| --label_format  | Label format tiff/tif/jpg/png                             |
+| --patch_size    | Patch size to feed network. Default size is 256           |
+| --overlap       | Overlap between two patches on image/tile (units: pixels) |
+| --output_folder | Output folder to save patches                             |
 
 <b> Example: </b>
 
@@ -89,14 +89,14 @@ python patch_gen.py --image_folder ../data/mass_sample/test/image/ --image_forma
 * Save directories of patches in CSV file instead of reading patches from folders directly
 * Output directory has to create to save the csv files `Ex: ../paths/`
 
-| options | Description |
-----------|--------------
---image_folder | Folder of image patches with directory
---image_format | Image format tif (patch_gen.py save patches in tif format)
---label_folder | Folder of label patches with directory
---label_format | Label format tif (patch_gen.py save patches in tif format)
---patch_size | Patch size to feed network. Default size is 256
---output_csv | csv filename with directory
+| options        | Description                                                |
+|----------------|------------------------------------------------------------|
+| --image_folder | Folder of image patches with directory                     |
+| --image_format | Image format tif (patch_gen.py save patches in tif format) |
+| --label_folder | Folder of label patches with directory                     |
+| --label_format | Label format tif (patch_gen.py save patches in tif format) |
+| --patch_size   | Patch size to feed network. Default size is 256            |
+| --output_csv   | csv filename with directory                                |
 
 <b> Example </b>
 
@@ -109,15 +109,15 @@ python csv_paths.py --image_folder ../data/mass_patches/image/ --label_folder ..
 * For Binary classification with one-hot encoding, `--num_classes = 2`
 * For multi class classification, `--num_classes = number of target classes (>1)`
 
-| options | Description |
-----------|--------------
---model | Name of the FCN model. Existing models are unet, unet_mini, segnet and resunet
---train_csv | CSV file name with directory, consists of directories of image and label patches of training set.
---valid_csv | CSV file name with directory, consists of directories of image and label patches of validation set.
---input_shape | Input shape of model to feed patches (patch_size patch_size channels)
---batch_size | Batch size, depends on GPU/CPU memory
---num_classes | Number of classes in labels data
---epochs | Number of epochs
+| options       | Description                                                                                         |
+|---------------|-----------------------------------------------------------------------------------------------------|
+| --model       | Name of the FCN model. Existing models are unet, unet_mini, segnet and resunet                      |
+| --train_csv   | CSV file name with directory, consists of directories of image and label patches of training set.   |
+| --valid_csv   | CSV file name with directory, consists of directories of image and label patches of validation set. |
+| --input_shape | Input shape of model to feed patches (patch_size patch_size channels)                               |
+| --batch_size  | Batch size, depends on GPU/CPU memory                                                               |
+| --num_classes | Number of classes in labels data                                                                    |
+| --epochs      | Number of epochs                                                                                    |
 
 <b> Example </b>
 
@@ -128,12 +128,12 @@ python train.py --model unet_mini --train_csv ../paths/data_rnb.csv --valid_csv 
 * Calculates the accuracy using different accuracy metrics.
 * IoU, F1-Score, Precision and Recall
 
-| options | Description |
-----------|--------------
---input_shape | Input shape of model (patch_size, patch_size, channels)
---weights | Trained model with directory
---csv_paths | CSV file name with directory, consists of directories of image and label patches of test set.
---num_classes | Number of classes in labels data
+| options       | Description                                                                                   |
+|---------------|-----------------------------------------------------------------------------------------------|
+| --input_shape | Input shape of model (patch_size, patch_size, channels)                                       |
+| --weights     | Trained model with directory                                                                  |
+| --csv_paths   | CSV file name with directory, consists of directories of image and label patches of test set. |
+| --num_classes | Number of classes in labels data                                                              |
 
 <b> Example </b>
 
@@ -144,13 +144,13 @@ python accuracy.py --model unet_mini --input_shape 256 256 3 --weights ../traine
 * Predicts the entire image/tile with trained model.
 * Output directory has to create to save the predicted images `Ex: ../data/predictions/`
 
-| options | Description |
-----------|--------------
---input_shape | Input shape of model (patch_size, patch_size, channels)
---weights | Trained model with directory
---image_folder | Folder of input images/tiles with directory
---image_format | Image format tiff/tif/jpg/png
---output_folder | Output folder to save predicted images/tiles
+| options         | Description                                             |
+|-----------------|---------------------------------------------------------|
+| --input_shape   | Input shape of model (patch_size, patch_size, channels) |
+| --weights       | Trained model with directory                            |
+| --image_folder  | Folder of input images/tiles with directory             |
+| --image_format  | Image format tiff/tif/jpg/png                           |
+| --output_folder | Output folder to save predicted images/tiles            |
 
 <b> Example: </b>
 
@@ -162,11 +162,11 @@ python tile_predict.py --model unet_mini --input_shape 256 256 3 --weights ../tr
 * Useful to check the configuration of Fully Convolutional Networks
 * Replace `unet, segnet and resunet` with `unet_mini` to check configuration of all netowrks
 
-| options | Description |
-----------|--------------
---model | Name of FCN model. Existing models are unet, unet_mini, segnet and resunet
---input_shape | Input shape of model to feed (patch_size patch_size channels)
---num_classes | Number of classes to train
+| options       | Description                                                                |
+|---------------|----------------------------------------------------------------------------|
+| --model       | Name of FCN model. Existing models are unet, unet_mini, segnet and resunet |
+| --input_shape | Input shape of model to feed (patch_size patch_size channels)              |
+| --num_classes | Number of classes to train                                                 |
 
 <b> Example </b>
 
@@ -174,8 +174,8 @@ python summary.py --model unet_mini --input_shape 256 256 3 --num_classes 3
 
 ### Example Outputs
 <p align="center">
-  <img width="900" height="1300"  src="/data/mass_sota.png">
-  <img width="900" height="330"  src="/data/mass_roads_and_buildings.png">
+  <img width="900" height="1300"  src="/data/figures/mass_sota.png">
+  <img width="900" height="330"  src="/data/figures/mass_roads_and_buildings.png">
 </p>
 
 ### Benchmark datasets
@@ -187,4 +187,4 @@ python summary.py --model unet_mini --input_shape 256 256 3 --num_classes 3
    -datasets](https://github.com/chrieke/awesome-satellite-imagery-datasets)
 
 #### Any problem with code?
-Open [issue](https://github.com/venkanna37/Label-Pixels/issues) or mail me :point_right:  g.venkanna37@gmail.com
+Please open the [issue](https://github.com/venkanna37/Label-Pixels/issues)
