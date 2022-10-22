@@ -1,0 +1,5 @@
+# Ignored files #
+###################
+# .gitignore
+/.idea
+/log_dir
