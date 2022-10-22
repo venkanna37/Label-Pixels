@@ -84,7 +84,7 @@ def rasterize(raster_dir, raster_format, vector_dir, vector_format,
         geom = feature.GetGeometryRef()
 
         if geom.GetGeometryType() == ogr.wkbLineString:
-            rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds, label_atr, buffer_atr)
+            rasterize_line(v_layer, buffer, driver, vector_epsg, target_ds, label_atr, buffer_atr)
         elif geom.GetGeometryType() == ogr.wkbPolygon:
             rasterize_polygon(v_layer, target_ds, label_atr)
         else:
@@ -94,7 +94,7 @@ def rasterize(raster_dir, raster_format, vector_dir, vector_format,
 # print("Rasterize N number of file" + "\n" + "Failed to rasterize N number of files")
 
 
-def rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds, label_atr, buffer_atr):
+def rasterize_line(v_layer, buffer, driver, vector_epsg, target_ds, label_atr, buffer_atr):
 
     """
     Rasterizing line feature with taking buffer from command line or attributes
