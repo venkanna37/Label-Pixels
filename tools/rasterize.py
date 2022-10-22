@@ -8,19 +8,21 @@ Vector: Shapes/List of coordinates (formats: .shp, .geojson)
 
 """
 
-import ogr
-import osr
-import gdal
-import numpy as np
-import os, sys
-import glob
 import argparse
+import gdal
+import glob
+import numpy as np
+import ogr
+import os
+import osr
+import sys
 
 
-def rasterize(args):
+def rasterize(raster_dir, raster_format, vector_dir, vector_format,
+              output_dir, buffer, buffer_atr, label_atr):
     # Load all Raster and Vector files
-    raster_files = sorted(glob.glob(os.path.join(args.raster_dir, "*." + args.raster_format)))
-    vector_files = sorted(glob.glob(os.path.join(args.vector_dir, "*." + args.vector_format)))
+    raster_files = sorted(glob.glob(os.path.join(raster_dir, "*." + raster_format)))
+    vector_files = sorted(glob.glob(os.path.join(vector_dir, "*." + vector_format)))
 
     assert len(raster_files) != 0, "There are no Raster files in the directory"
     assert len(vector_files) != 0, "There are no Vector files in the directory"
@@ -29,7 +31,8 @@ def rasterize(args):
     print("Loaded " + str(len(vector_files)) + " Vector and Raster files " + "\n")
 
     # Check raster and vector file names ( is same or not)
-    r_files, v_files, r_not_matched_files, v_not_matched_files = check_filenames(raster_files, vector_files)
+    r_files, v_files, r_not_matched_files, v_not_matched_files = check_filenames(raster_files, vector_files,
+                                                                                 raster_format, vector_format)
 
     assert len(r_files) != 0 and len(v_files) != 0 and len(v_files) == len(r_files)
     print("Rasterizing " + str(len(r_files)) + " file(s)" + "\n")
@@ -39,9 +42,9 @@ def rasterize(args):
         # print(r, v)
         raster_layer = gdal.Open(r)
 
-        if args.vector_format == "geojson":
+        if vector_format == "geojson":
             driver = ogr.GetDriverByName('GeoJSON')
-        elif args.vector_format == "shp":
+        elif vector_format == "shp":
             driver = ogr.GetDriverByName('ESRI Shapefile')
         else:
             print("Check file format, This tool Rasterize only geojson and shapefiles")
@@ -65,7 +68,7 @@ def rasterize(args):
 
         # (2) Creating the destination raster data source
         fn = os.path.basename(r)
-        output_file =os.path.join(args.output_dir, fn)
+        output_file =os.path.join(output_dir, fn)
         # print(output_file)
         ref_image = raster_layer
         gt = ref_image.GetGeoTransform()
@@ -81,9 +84,9 @@ def rasterize(args):
         geom = feature.GetGeometryRef()
 
         if geom.GetGeometryType() == ogr.wkbLineString:
-            rasterize_line(v_layer, args.buffer, args.buffer_atr, driver, vector_epsg, target_ds, args.label_atr)
+            rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds, label_atr, buffer_atr)
         elif geom.GetGeometryType() == ogr.wkbPolygon:
-            rasterize_polygon(v_layer, target_ds, args.label_atr)
+            rasterize_polygon(v_layer, target_ds, label_atr)
         else:
             print("The Geometry type is neither Polygon nor Line")
 
@@ -91,7 +94,7 @@ def rasterize(args):
 # print("Rasterize N number of file" + "\n" + "Failed to rasterize N number of files")
 
 
-def rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds, label_atr):
+def rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds, label_atr, buffer_atr):
 
     """
     Rasterizing line feature with taking buffer from command line or attributes
@@ -121,7 +124,7 @@ def rasterize_line(v_layer, buffer, buffer_atr, driver, vector_epsg, target_ds, 
     while feature:
         if buffer_atr:
             try:
-                buffer_width = (float(feature.GetField(args.buffer_atr)) * buffer)
+                buffer_width = (float(feature.GetField(buffer_atr)) * buffer)
             except ValueError:
                 print("The type of attribute value should be integer or float")
                 sys.exit()
@@ -179,7 +182,7 @@ def rasterize_polygon(v_layer, target_ds, label_atr):
         target_ds = None
 
 
-def check_filenames(raster_files, vector_files):
+def check_filenames(raster_files, vector_files, raster_format, vector_format):
     """
     Function for checking raster and vector filenames
     Assuming there are no repeated files in directories
@@ -194,8 +197,8 @@ def check_filenames(raster_files, vector_files):
     for i, j in zip(raster_files, vector_files):
         _, raster_filename = os.path.split(i)
         _, vector_filename = os.path.split(j)
-        raster_filename = raster_filename[: -len(args.raster_format)-1]
-        vector_filename = vector_filename[: -len(args.vector_format)-1]
+        raster_filename = raster_filename[: -len(raster_format)-1]
+        vector_filename = vector_filename[: -len(vector_format)-1]
         # print(raster_filename, vector_filename)
         if raster_filename != vector_filename:
             r_not_matched_files.append(i)
@@ -223,4 +226,6 @@ if __name__ == '__main__':
     parser.add_argument("--label_atr", type=str, help="Attribute from the vector file to assign label to pixel."
                                                       "Not required for single class")
     args = parser.parse_args()
-    rasterize(args)
+
+    rasterize(args.raster_dir, args.raster_format, args.vector_dir, args.vector_format,
+    args.output_dir, args.buffer, args.buffer_atr, args.label_atr)
