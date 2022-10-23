@@ -12,27 +12,27 @@ import argparse
 from models import lp_utils as lu
 
 
-def accuracy(args):
+def accuracy(model_name, weights_path, input_shape, num_classes, csv_paths, rs, rs_label):
     # Loading model with weights
-    model = lu.select_model(args)
+    model = lu.select_model(model_name, weights_path, input_shape, num_classes)
     # Saving image paths as a list
-    test_image_paths, test_label_paths = lu.file_paths(args.csv_paths)
+    test_image_paths, test_label_paths = lu.file_paths(csv_paths)
     # Calculating accuracy
     y, y_pred = [], []
-    rescale_value = lu.rescaling_value(args.rs)
+    rescale_value = lu.rescaling_value(rs)
     for i in range(len(test_image_paths)):
         image = gdal.Open(test_image_paths[i])
         image_array = np.array(image.ReadAsArray()) / rescale_value
         image_array = image_array.transpose(1, 2, 0)
         label = gdal.Open(test_label_paths[i])
-        label_array = np.array(label.ReadAsArray()) / args.rs_label
+        label_array = np.array(label.ReadAsArray()) / rs_label
         label_array = np.expand_dims(label_array, axis=-1)
         fm = np.expand_dims(image_array, axis=0)
         result_array = model.predict(fm)
-        if args.num_classes != 1:
+        if num_classes != 1:
             result_array = np.argmax(result_array[0], axis=2)
         result_array = np.squeeze(result_array)
-        if args.num_classes == 1:
+        if num_classes == 1:
             result_array = np.around(result_array.flatten())
         y.append(np.around(label_array))
         y_pred.append(result_array)
@@ -76,4 +76,6 @@ if __name__ == '__main__':
     parser.add_argument("--rs", type=int, help="Radiometric resolution of the image", default=8)
     parser.add_argument("--rs_label", type=int, help="Rescaling labels if they are not single digits", default=1)
     args = parser.parse_args()
-    accuracy(args)
+
+    accuracy(args.model, args.weights, tuple(args.input_shape), args.num_classes,
+             args.csv_paths, args.rs, args.rs_label)

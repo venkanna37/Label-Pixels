@@ -64,21 +64,23 @@ def image_from_patches(result, idx, patchsize, t_rows, t_cols):
                 outimage[-patchsize:, -patchsize:, :] = result[k]
     return outimage
 
-def tile_predict(args):
-    if args.model == "unet":
-        model = load_model(args.weights)
-    if args.model == "unet_mini":
-        model = load_model(args.weights)
-    elif args.model == "resunet":
-        model = load_model(args.weights)
-    elif args.model == "segnet":
-        model = segnet_model.create_segnet(args)
-        model.load_weights(args.weights)
+
+def tile_predict(model_name, weights_path, input_shape, num_classes, image_folder,
+                 image_format, rs, output_folder):
+    if model_name == "unet":
+        model = load_model(weights_path)
+    if model_name == "unet_mini":
+        model = load_model(weights_path)
+    elif model_name == "resunet":
+        model = load_model(weights_path)
+    elif model_name == "segnet":
+        model = segnet_model.create_segnet(input_shape, num_classes)
+        model.load_weights(weights_path)
 
     _, p_rows, p_cols, p_chan = model.layers[0].input_shape[0] # Patch shape
-    image_paths = sorted(glob.glob(args.image_folder + "*." + args.image_format))
+    image_paths = sorted(glob.glob(image_folder + "*." + image_format))
     outdriver = gdal.GetDriverByName("GTiff")
-    rs = lu.rescaling_value(args.rs)
+    rs = lu.rescaling_value(rs)
 
     for i in range(len(image_paths)):
         image = gdal.Open(image_paths[i])
@@ -91,9 +93,9 @@ def tile_predict(args):
         for j in range(image_patches.shape[0]):
             patch = np.expand_dims(image_patches[j], axis=0)
             patch_result = model.predict(patch)
-            if args.num_classes == 1:
+            if num_classes == 1:
                 patch_result = patch_result
-            elif args.num_classes > 1:
+            elif num_classes > 1:
                 patch_result = np.expand_dims(np.argmax(patch_result, axis=3), axis=-1)
             result = np.concatenate((result, patch_result), axis=0)
         # print(result.shape)
@@ -101,7 +103,7 @@ def tile_predict(args):
         # result_array = np.reshape(result_array, (args.tile_size, args.tile_size))  #  Value between 0 and 1
         result_array = np.reshape(result_array, (t_rows, t_cols))  # Binary, 0 and 1
         filename = os.path.splitext(os.path.basename(image_paths[i]))[0]
-        outfile = args.output_folder + filename
+        outfile = output_folder + filename
         outfile = outfile + ".tif"  # Line for jpg, png, and tiff formats
         outdata = outdriver.Create(str(outfile), t_rows, t_cols, 1, gdal.GDT_Int16)
         outdata.GetRasterBand(1).WriteArray(result_array)
@@ -124,4 +126,6 @@ if __name__ == '__main__':
     parser.add_argument("--num_classes", type=int, help="Number of classes")
     parser.add_argument("--rs", type=int, help="Radiometric resolution of the image", default=8)
     args = parser.parse_args()
-    tile_predict(args)
+
+    tile_predict(args.model, args.weights, tuple(args.input_shape), args.num_classes, args.image_folder,
+                 args.image_format, args.rs, args.output_folder)

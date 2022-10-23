@@ -4,13 +4,12 @@ import os
 import argparse
 
 
-def csv_gen(args):
+def csv_gen(image_folder, image_format, label_folder, label_format, output_csv):
     rows = []
-    image_paths = sorted(glob.glob(args.image_folder + "*." + args.image_format))
-    label_paths = sorted(glob.glob(args.label_folder + "*." + args.label_format))
+    image_paths = sorted(glob.glob(image_folder + "*." + image_format))
+    label_paths = sorted(glob.glob(label_folder + "*." + label_format))
     print(len(image_paths), len(label_paths))
     for i, j in zip(image_paths, label_paths):
-        # print(i, j)
         # print(os.path.splitext(os.path.basename(i))[0][:-5], os.path.splitext(os.path.basename(j))[0][:-4])
         # print(os.path.splitext(os.path.basename(i))[0], os.path.splitext(os.path.basename(j))[0])
         if os.path.splitext(os.path.basename(i))[0] == os.path.splitext(os.path.basename(j))[0]:
@@ -18,8 +17,7 @@ def csv_gen(args):
         else:
             print("Image and label names not matched")
 
-    filename = args.output_csv
-    with open(filename, 'w') as csvfile:
+    with open(output_csv, 'w') as csvfile:
         csvwriter = csv.writer(csvfile)
         csvwriter.writerows(rows)
     print("CSV file created")
@@ -33,4 +31,5 @@ if __name__ == '__main__':
     parser.add_argument("--label_format", type=str, help="Label format", default="tif")
     parser.add_argument("--output_csv", type=str, help="CSV file name with directory")
     args = parser.parse_args()
-    csv_gen(args)
+    csv_gen(args.image_folder, args.image_format, args.label_folder,
+            args.label_format, args.output_csv)
