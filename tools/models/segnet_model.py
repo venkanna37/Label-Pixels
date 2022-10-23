@@ -152,14 +152,14 @@ def VGG16_encoder(input_shape, init=True):
     return model
 
 
-def create_segnet(args, indices=True, ker_init="he_normal") -> tModel:
+def create_segnet(input_shape, num_classes, indices=True, ker_init="he_normal") -> tModel:
 
-    input_shape = tuple(args.input_shape)
+    # input_shape = tuple(args.input_shape)
     if input_shape[2] == 3:
         init = True
     else:
         init = False
-    encoder = VGG16_encoder(input_shape, init=init)
+    encoder = VGG16_encoder(input_shape, init=False)
 
     L = [layer for i, layer in enumerate(encoder.layers)] # type: List[Layer]
     #for layer in L: layer.trainable = False # freeze VGG16
@@ -199,11 +199,11 @@ def create_segnet(args, indices=True, ker_init="he_normal") -> tModel:
     x = Activation('relu')(BatchNormalization()(Conv2D(L[16].filters, L[16].kernel_size, padding=L[16].padding, kernel_initializer=ker_init)(x)))
     x = Activation('relu')(BatchNormalization()(Conv2D(L[17].filters, L[17].kernel_size, padding=L[17].padding, kernel_initializer=ker_init)(x)))
 
-    x = Conv2D(args.num_classes, (1, 1), padding='valid', kernel_initializer=ker_init)(x)
+    x = Conv2D(num_classes, (1, 1), padding='valid', kernel_initializer=ker_init)(x)
 
-    if args.num_classes == 1:
+    if num_classes == 1:
         x = Activation('sigmoid')(x)
-    elif args.num_classes > 1:
+    elif num_classes > 1:
         x = Activation('softmax')(x)
     
     predictions = x
@@ -217,10 +217,3 @@ def model_summary(args):
     model = create_segnet(args)
     model.summary()
 
-
-if __name__ == '__main__':
-    segnet = create_segnet((480, 360, 3), 12, indices=False, ker_init="he_normal")
-    segnet.summary()
-    plot_model(segnet, to_file='segnet.png', show_shapes=True, show_layer_names=True)
-    #with open('segnet_model.json', 'w') as f: f.write(segnet.to_json())
-    exit()

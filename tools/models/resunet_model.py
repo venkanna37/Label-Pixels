@@ -51,19 +51,19 @@ def decoder(x, from_encoder):
     return main_path
 
 
-def build_res_unet(args):
-    input_shape = tuple(args.input_shape)
+def build_res_unet(input_shape, num_classes):
+    # input_shape = tuple(args.input_shape)
     inputs = Input(shape=input_shape)
     to_decoder = encoder(inputs)
     path = res_block(to_decoder[2], [512, 512], [(2, 2), (1, 1)])
     path = decoder(path, from_encoder=to_decoder)
-    if args.num_classes > 1:
-        path = Conv2D(args.num_classes, kernel_size=(1, 1), activation='softmax')(path)
-    elif args.num_classes == 1:
+    if num_classes > 1:
+        path = Conv2D(num_classes, kernel_size=(1, 1), activation='softmax')(path)
+    elif num_classes == 1:
         path = Conv2D(filters=1, kernel_size=(1, 1), activation='sigmoid')(path)
-    return Model(input=inputs, output=path)
+    return Model(inputs, path)
 
 
-def model_summary(args):
-    model = build_res_unet(args)
+def model_summary(input_shape, num_classes):
+    model = build_res_unet(input_shape, num_classes)
     model.summary()

@@ -35,8 +35,8 @@ def bottleneck(x, filters, kernel_size=(3, 3), padding="same", strides=1):
     return c
 
 
-def UNet(args):
-    input_shape = tuple(args.input_shape)
+def UNet(input_shape, num_classes):
+    # input_shape = tuple(args.input_shape)
     f = [16, 32, 64, 128, 256]
     inputs = keras.layers.Input(input_shape)
 
@@ -53,9 +53,9 @@ def UNet(args):
     u3 = up_block(u2, c2, f[1])  # 32 -> 64
     u4 = up_block(u3, c1, f[0])  # 64 -> 128
 
-    if args.num_classes > 1:
-        outputs = keras.layers.Conv2D(args.num_classes, (1, 1), padding="same", activation="softmax")(u4)
-    elif args.num_classes == 1:
+    if num_classes > 1:
+        outputs = keras.layers.Conv2D(num_classes, (1, 1), padding="same", activation="softmax")(u4)
+    elif num_classes == 1:
         outputs = keras.layers.Conv2D(1, (1, 1), padding="same", activation="sigmoid")(u4)
     model = keras.models.Model(inputs, outputs)
     return model

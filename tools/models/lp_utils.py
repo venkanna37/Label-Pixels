@@ -8,29 +8,29 @@ from models import resunet_model, unet_model, segnet_model, unet_mini
 
 
 # Load model
-def select_model(args):
-    if args.model == "unet":
-        model = unet_model.unet(args)
-        if args.weights:
-            model.load_weights(args.weights)
+def select_model(model_name, weights_path, input_shape, num_classes):
+    if model_name == "unet":
+        model = unet_model.unet(input_shape, num_classes)
+        if weights_path:
+            model.load_weights(weights_path)
         return model
-    elif args.model == "resunet":
-        model = resunet_model.build_res_unet(args)
-        if args.weights:
-            model.load_weights(args.weights)
+    elif model_name == "resunet":
+        model = resunet_model.build_res_unet(input_shape, num_classes)
+        if weights_path:
+            model.load_weights(weights_path)
         return model
-    elif args.model == "segnet":
-        model = segnet_model.create_segnet(args)
-        if args.weights:
-            model.load_weights(args.weights)
+    elif model_name == "segnet":
+        model = segnet_model.create_segnet(input_shape, num_classes)
+        if weights_path:
+            model.load_weights(weights_path)
         return model
-    elif args.model == "unet_mini":
-        model = unet_mini.UNet(args)
-        if args.weights:
-            model.load_weights(args.weights)
+    elif model_name == "unet_mini":
+        model = unet_mini.UNet(input_shape, num_classes)
+        if weights_path:
+            model.load_weights(weights_path)
         return model
     else:
-        print(args.model + "Model does not exist, select model from"
+        print(model_name + "Model does not exist, select model from"
                            " unet, unet_mini, resunet and segnet")
         sys.exit()
 
