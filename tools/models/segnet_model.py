@@ -13,11 +13,9 @@ from keras.layers import Input
 from keras.layers.core import Activation, Dropout
 from keras.layers.convolutional import Conv2D, UpSampling2D, ZeroPadding2D
 from keras.layers.pooling import MaxPooling2D
-from keras.layers.normalization import BatchNormalization
-from keras.engine.topology import Layer
-from keras.utils import plot_model
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.layers import Layer
 from keras.backend import argmax, gradients, sum, repeat_elements
-from keras import regularizers
 
 
 class DePool2D(UpSampling2D):
