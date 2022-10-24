@@ -8,6 +8,7 @@ import gdal
 import glob
 import numpy as np
 import os
+import shutil
 import argparse
 
 
@@ -16,11 +17,17 @@ def patch_gen(image_folder, image_format, label_folder, label_format,
     # Reading all the images and labels from input folders
     image_paths = sorted(glob.glob(str(image_folder) + "*." + image_format))
     label_paths = sorted(glob.glob(str(label_folder) + "*." + label_format))
+
     # Creating output folders for patch size images
-    os.mkdir(output_folder + "image/")
-    os.mkdir(output_folder + "label/")
     output_image_folder = output_folder + "image/"
     output_label_folder = output_folder + "label/"
+    if os.path.exists(output_image_folder):
+        shutil.rmtree(output_image_folder)
+    if os.path.exists(output_label_folder):
+        shutil.rmtree(output_label_folder)
+    os.mkdir(output_image_folder)
+    os.mkdir(output_label_folder)
+
 
     outdriver = gdal.GetDriverByName("GTiff")
     # Clipping images with patch_size
