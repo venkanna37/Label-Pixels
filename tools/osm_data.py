@@ -36,4 +36,4 @@ if __name__ == '__main__':
     parser.add_argument("--outfile", type=str, help="Output filename with directory")
     args = parser.parse_args()
 
-    download_osm(args.bbox, args.outfile, args.osm_tag)
+    download_osm(args.bbox, args.outfile, args.tags)
